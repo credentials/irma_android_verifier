@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">IRMA-CredCheck</string>
+    <string name="checkcredentialstitle">Checking credentials</string>
+    <string name="foundcredential_title">Found credential!</string>
+    <string name="nocredential_title">No credential found!</string>
+    
+</resources>
