@@ -83,8 +83,8 @@ public class AnonCredCheckActivity extends Activity {
     	if (tag != null) {
     		lastTag = tag;
     		Log.i(TAG,"Found IsoDep tag!");
-//    		showProgressDialog();
-//    		new CheckCardCredentialTask().execute(tag);
+    		showProgressDialog();
+    		new CheckCardCredentialTask().execute(tag);
     	}
     }
     
@@ -189,20 +189,20 @@ public class AnonCredCheckActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(IsoDep... arg0) {
 			IsoDep tag = arg0[0];
-			StructureStore.getInstance().get("http://www.zurich.ibm.com/security/idmx/v2/sp.xml",
+			StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
 	        		getApplicationContext().getResources().openRawResource(R.raw.sp));
 			
-			StructureStore.getInstance().get("http://www.zurich.ibm.com/security/idmx/v2/gp.xml",
+			StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
 	        		getApplicationContext().getResources().openRawResource(R.raw.gp));
 
-	        StructureStore.getInstance().get("http://www.issuer.com/ipk.xml",
+	        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
 	        		getApplicationContext().getResources().openRawResource(R.raw.ipk));
 			
-	        StructureStore.getInstance().get("http://www.ngo.org/CredStructCard4.xml",
-	        		getApplicationContext().getResources().openRawResource(R.raw.credstructcard4));
+	        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
+	        		getApplicationContext().getResources().openRawResource(R.raw.structure));
 
-	        ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("proofcardspec4",
-	        		getApplicationContext().getResources().openRawResource(R.raw.proofspeccard4));
+	        ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
+	        		getApplicationContext().getResources().openRawResource(R.raw.specification));
 	        
 	        System.out.println(spec.toStringPretty());
 
