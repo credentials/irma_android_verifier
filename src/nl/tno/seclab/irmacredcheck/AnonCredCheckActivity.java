@@ -1,7 +1,6 @@
 package nl.tno.seclab.irmacredcheck;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -78,7 +77,6 @@ public class AnonCredCheckActivity extends Activity {
     public void onNewIntent(Intent intent) {
         Log.i(TAG, "Discovered tag with intent: " + intent);
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-    	byte[] curTagId = tagFromIntent.getId();
     	IsoDep tag = IsoDep.get(tagFromIntent);
     	if (tag != null) {
     		lastTag = tag;

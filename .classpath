@@ -4,10 +4,10 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/scuba_sc_android_old"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/scuba_smartcards_old"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/credentials_api"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/idemix_library"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/idemix_terminal_old"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/scuba_util_old"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/idemix_terminal"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/scuba_sc_android"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/scuba_smartcards"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
