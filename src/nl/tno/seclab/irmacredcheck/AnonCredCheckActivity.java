@@ -23,6 +23,7 @@ import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
@@ -41,6 +42,8 @@ public class AnonCredCheckActivity extends Activity {
 	CheckResultAdapter checkresults;
 	private NfcAdapter nfcA;
 	private PendingIntent mPendingIntent;
+	private IntentFilter[] mFilters;
+	private String[][] mTechLists;
 	private IsoDep lastTag;
 	private final String TAG = "AnonCredCheck";
 	
@@ -60,12 +63,21 @@ public class AnonCredCheckActivity extends Activity {
         mPendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
+        // Setup an intent filter for all TECH based dispatches
+        IntentFilter tech = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
+        mFilters = new IntentFilter[] { tech };
+
+        // Setup a tech list for all IsoDep cards
+        mTechLists = new String[][] { new String[] { IsoDep.class.getName() } };
     }
     
     @Override
     public void onResume() {
-    	super.onResume();
-    	if (nfcA != null) nfcA.enableForegroundDispatch(this, mPendingIntent, null, null);
+        super.onResume();
+        if (nfcA != null) nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
+            onNewIntent(getIntent());
+        }
     }
     
     @Override
@@ -209,7 +221,8 @@ public class AnonCredCheckActivity extends Activity {
 			BigInteger nonce = Verifier.getNonce(sp);
 			
 			IdemixService prover = null;
-			prover = new IdemixService(new IsoDepCardService(tag));
+			// 0x0064 is the id of the student credential
+			prover = new IdemixService(new IsoDepCardService(tag), (short) 0x0064);
 			try {
 				prover.open();
 			} catch (CardServiceException e1) {
