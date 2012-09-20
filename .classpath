@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/idemix_library"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/idemix_terminal"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/credentials_api"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

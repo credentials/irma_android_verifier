@@ -10,8 +10,14 @@ import com.ibm.zurich.idmx.showproof.Verifier;
 import com.ibm.zurich.idmx.utils.StructureStore;
 import com.ibm.zurich.idmx.utils.SystemParameters;
 
+import credentials.Attributes;
+import credentials.CredentialsException;
+import credentials.idemix.IdemixCredentials;
+import credentials.idemix.spec.IdemixVerifySpecification;
+
 import service.IdemixService;
 
+import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.CardServiceException;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
 
@@ -46,6 +52,7 @@ public class AnonCredCheckActivity extends Activity {
 	private String[][] mTechLists;
 	private IsoDep lastTag;
 	private final String TAG = "AnonCredCheck";
+	private IdemixVerifySpecification idemixVerifySpec;
 	
     /** Called when the activity is first created. */
     @Override
@@ -69,6 +76,29 @@ public class AnonCredCheckActivity extends Activity {
 
         // Setup a tech list for all IsoDep cards
         mTechLists = new String[][] { new String[] { IsoDep.class.getName() } };
+        
+        setupIdemix();
+    }
+    
+    public void setupIdemix() {
+		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
+        		getApplicationContext().getResources().openRawResource(R.raw.sp));
+		
+		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
+        		getApplicationContext().getResources().openRawResource(R.raw.gp));
+
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
+        		getApplicationContext().getResources().openRawResource(R.raw.ipk));
+		
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
+        		getApplicationContext().getResources().openRawResource(R.raw.structure));
+
+        ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
+        		getApplicationContext().getResources().openRawResource(R.raw.specification));
+        
+        // 0x0064 is the id of the student credential
+        idemixVerifySpec = new IdemixVerifySpecification(spec, (short)0x0064);
+        
     }
     
     @Override
@@ -199,77 +229,31 @@ public class AnonCredCheckActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(IsoDep... arg0) {
 			IsoDep tag = arg0[0];
-			StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
-	        		getApplicationContext().getResources().openRawResource(R.raw.sp));
 			
-			StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
-	        		getApplicationContext().getResources().openRawResource(R.raw.gp));
-
-	        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
-	        		getApplicationContext().getResources().openRawResource(R.raw.ipk));
-			
-	        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
-	        		getApplicationContext().getResources().openRawResource(R.raw.structure));
-
-	        ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
-	        		getApplicationContext().getResources().openRawResource(R.raw.specification));
-	        
-	        System.out.println(spec.toStringPretty());
-
+			// Make sure time-out is long enough (10 seconds)
 			tag.setTimeout(10000);
-	        SystemParameters sp = spec.getGroupParams().getSystemParams();
-			BigInteger nonce = Verifier.getNonce(sp);
 			
-			IdemixService prover = null;
-			// 0x0064 is the id of the student credential
-			prover = new IdemixService(new IsoDepCardService(tag), (short) 0x0064);
-			try {
-				prover.open();
-			} catch (CardServiceException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				return false;
-			}
-//			byte[] pin = {0x30,0x30,0x30,0x30};
-//			try {
-//				prover.sendPin(pin);
-//			} catch (CardServiceException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			CardService cs = new IsoDepCardService(tag);
 
-//			try {
-//				tag.connect();
-//				Log.i(TAG,"R1: " + BytesUtils.toHexString(tag.transceive(BytesUtils.fromHexString("00A40400066964656D697800"))));
-////				Log.i(TAG,"R2: " + BytesUtils.toHexString(tag.transceive(BytesUtils.fromHexString("80230000"))));
-//				Log.i(TAG,"R2: " + BytesUtils.toHexString(tag.transceive(BytesUtils.fromHexString("8020000314B7FC4FCA77E2FA6010F346B2F535F5ACE62B0C84"))));
-//			
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				return false;
-//			}
-			
-			Proof p = prover.buildProof(nonce, spec);
+			IdemixCredentials ic = new IdemixCredentials(cs);
+			Attributes attr = null;
 			try {
-				tag.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				attr = ic.verify(idemixVerifySpec);
+				if (attr == null) {
+		            Log.i(TAG,"The proof does not verify");
+		            return false;
+		        } else {
+		        	Log.i(TAG,"The proof verified!");
+		        	return true;
+		        }				
+			} catch (CredentialsException e) {
+				Log.e(TAG, "Idemix verification threw an Exception!");
 				e.printStackTrace();
-			}
-			if (p == null) {
+				// TODO: possibly handle this differently to be able to indicate
+				// in the GUI that an error has occurred (instead of just that
+				// the verification failed).
 				return false;
 			}
-			
-			Verifier verifier = new Verifier(spec, p, nonce);
-	        if (!verifier.verify()) {
-	            Log.i(TAG,"The proof does not verify");
-	            return false;
-	        } else {
-	        	Log.i(TAG,"The proof verified!");
-	        	return true;
-	        }
-	        
 		}
 		
 		@Override
