@@ -1,26 +1,17 @@
 package nl.tno.seclab.irmacredcheck;
 
-import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 
-import com.ibm.zurich.idmx.showproof.Proof;
 import com.ibm.zurich.idmx.showproof.ProofSpec;
-import com.ibm.zurich.idmx.showproof.Verifier;
 import com.ibm.zurich.idmx.utils.StructureStore;
-import com.ibm.zurich.idmx.utils.SystemParameters;
 
 import credentials.Attributes;
 import credentials.CredentialsException;
 import credentials.idemix.IdemixCredentials;
 import credentials.idemix.spec.IdemixVerifySpecification;
 
-import service.IdemixService;
-
 import net.sourceforge.scuba.smartcards.CardService;
-import net.sourceforge.scuba.smartcards.CardServiceException;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
-
 
 import android.app.Activity;
 import android.app.AlertDialog;
