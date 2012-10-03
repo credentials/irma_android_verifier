@@ -149,12 +149,12 @@ public class AnonCredCheckActivity extends Activity {
     	}
     }
     
-    private void showResultDialog(boolean value) {
+    private void showResultDialog(int resultValue) {
     	DialogFragment df = (DialogFragment)getFragmentManager().findFragmentByTag("checkingdialog");
     	if (df != null) {
     		df.dismiss();
     	}
-    	DialogFragment newFragment = CheckResultDialogFragment.newInstance(value);
+    	DialogFragment newFragment = CheckResultDialogFragment.newInstance(resultValue);
     	newFragment.show(getFragmentManager(), "resultdialog");    	
     }
     
@@ -217,10 +217,10 @@ public class AnonCredCheckActivity extends Activity {
 
     public static class CheckResultDialogFragment extends DialogFragment {
 
-        public static CheckResultDialogFragment newInstance(boolean value) {
+        public static CheckResultDialogFragment newInstance(int value) {
             CheckResultDialogFragment frag = new CheckResultDialogFragment();
             Bundle args = new Bundle();
-            args.putBoolean("value", value);
+            args.putInt("value", value);
             frag.setArguments(args);
             return frag;
         }
@@ -229,10 +229,23 @@ public class AnonCredCheckActivity extends Activity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
         	ImageView iv = new ImageView(getActivity().getApplicationContext());
-        	boolean value = getArguments().getBoolean("value");
-        	iv.setImageResource(value ? R.drawable.green_check0350 : R.drawable.red_cross0350);
+        	int value = getArguments().getInt("value");
+        	int image_resource = R.drawable.orange_questionmark0350;
+        	int title_resource = R.string.verificationfailed_title;
+
+        	switch (value) {
+			case CheckResult.STATE_VALID:
+				image_resource = R.drawable.green_check0350;
+				title_resource = R.string.foundcredential_title;
+				break;
+			case CheckResult.STATE_INVALID:
+				image_resource = R.drawable.red_cross0350;
+				title_resource = R.string.nocredential_title;
+				break;
+			}
+        	iv.setImageResource(image_resource);
             return new AlertDialog.Builder(getActivity())
-                    .setTitle(value ? R.string.foundcredential_title : R.string.nocredential_title)
+                    .setTitle(title_resource)
                     .setView(iv)
                     .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
@@ -245,10 +258,10 @@ public class AnonCredCheckActivity extends Activity {
         }
     }
     
-    private class CheckCardCredentialTask extends AsyncTask<IsoDep, Void, Boolean> {
+    private class CheckCardCredentialTask extends AsyncTask<IsoDep, Void, CheckResult> {
 
 		@Override
-		protected Boolean doInBackground(IsoDep... arg0) {
+		protected CheckResult doInBackground(IsoDep... arg0) {
 			IsoDep tag = arg0[0];
 			
 			// Make sure time-out is long enough (10 seconds)
@@ -262,26 +275,23 @@ public class AnonCredCheckActivity extends Activity {
 				attr = ic.verify(idemixVerifySpec);
 				if (attr == null) {
 		            Log.i(TAG,"The proof does not verify");
-		            return false;
+		            return new CheckResult(CheckResult.STATE_INVALID);
 		        } else {
 		        	Log.i(TAG,"The proof verified!");
-		        	return true;
+		        	return new CheckResult(CheckResult.STATE_VALID);
 		        }				
 			} catch (CredentialsException e) {
 				Log.e(TAG, "Idemix verification threw an Exception!");
 				e.printStackTrace();
-				// TODO: possibly handle this differently to be able to indicate
-				// in the GUI that an error has occurred (instead of just that
-				// the verification failed).
-				return false;
+				return new CheckResult(CheckResult.STATE_FAILED);
 			}
 		}
 		
 		@Override
-		protected void onPostExecute(Boolean result) {
-			AnonCredCheckActivity.this.checkresults.insert(new CheckResult(result.booleanValue()), 0);
-			AnonCredCheckActivity.this.showResultDialog(result.booleanValue());
+		protected void onPostExecute(CheckResult result) {
+			AnonCredCheckActivity.this.checkresults.insert(result, 0);
+			// TODO: also proper icon in dialog feedback!
+			AnonCredCheckActivity.this.showResultDialog(result.getState());
 		}
-			
     }
 }

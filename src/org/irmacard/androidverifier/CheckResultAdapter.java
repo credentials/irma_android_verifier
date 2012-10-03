@@ -25,12 +25,17 @@ public class CheckResultAdapter extends ArrayAdapter<CheckResult>{
 		
 		ImageView icon = (ImageView) rowView.findViewById(R.id.checkicon);
 		
-		if (cr.getValue()) {
+		switch (cr.getState()) {
+		case CheckResult.STATE_VALID:
 			icon.setImageResource(R.drawable.green_check0064);
-		} else {
+			break;
+		case CheckResult.STATE_INVALID:
 			icon.setImageResource(R.drawable.red_cross0064);
+			break;
+		case CheckResult.STATE_FAILED:
+			icon.setImageResource(R.drawable.orange_questionmark0064);
 		}
-		
+				
 		TextView messageView = (TextView) rowView.findViewById(R.id.checkmessage);
 		messageView.setText(cr.getFormattedValue());
 		

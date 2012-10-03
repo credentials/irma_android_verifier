@@ -5,5 +5,6 @@
     <string name="checkcredentialstitle">Student credential: Verifying...</string>
     <string name="foundcredential_title">Student credential: Valid credential found</string>
     <string name="nocredential_title">Student credential: No credential found!</string>
+    <string name="verificationfailed_title">Verification failed</string>  
     <string name="irmalogo">IRMA logo</string>
 </resources>

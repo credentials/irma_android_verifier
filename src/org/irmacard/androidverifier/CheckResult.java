@@ -6,12 +6,16 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class CheckResult {
-	private boolean value;
+	public final static int STATE_VALID   = 0;
+	public final static int STATE_INVALID = 1;
+	public final static int STATE_FAILED  = 2;
+	
+	private int state;
 	private Date timestamp;
 	private DateFormat dateFormat = new SimpleDateFormat("MMMMM dd, yyyy 'at' HH:mm:ss");;
 	
-	public CheckResult(boolean value) {
-		this.value = value;
+	public CheckResult(int state) {
+		this.state = state;
 		this.timestamp = Calendar.getInstance().getTime();
 	}
 	
@@ -20,13 +24,22 @@ public class CheckResult {
 	}
 	
 	public String getFormattedValue() {
-		return value ? "Valid credential": "No valid credential";
+		switch (state) {
+		case STATE_VALID:
+			return "Valid credential";
+		case STATE_INVALID:
+			return "No valid credential";
+		case STATE_FAILED:
+			return "Verification failed";
+		default:
+			return "Unknown state";
+		}
 	}
 	
-	public boolean getValue() {
-		return value;
+	public int getState() {
+		return state;
 	}
-	
+		
 	@Override
 	public String toString() {
 		return getFormattedDate() + " (" + getFormattedValue() + ")";
