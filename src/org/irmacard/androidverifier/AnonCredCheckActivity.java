@@ -51,6 +51,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -81,6 +82,9 @@ public class AnonCredCheckActivity extends Activity {
         checkresults = new CheckResultAdapter(getApplicationContext(), R.layout.checkresultlistitem, emptyList);
         ListView lv = (ListView)findViewById(R.id.resultslistview);
         lv.setAdapter(checkresults);
+        
+        // Prevent the screen from turning off
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
         // NFC stuff
         nfcA = NfcAdapter.getDefaultAdapter(getApplicationContext());
