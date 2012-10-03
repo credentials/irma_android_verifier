@@ -1,4 +1,4 @@
-package nl.tno.seclab.irmacredcheck;
+package org.irmacard.androidverifier;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

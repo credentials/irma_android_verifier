@@ -1,8 +1,7 @@
-package nl.tno.seclab.irmacredcheck;
+package org.irmacard.androidverifier;
 
 import java.util.List;
 
-import nl.tno.seclab.irmacredcheck.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
