@@ -18,7 +18,6 @@
  * Copyright (C) Wouter Lueks, Radboud University Nijmegen, July 2012.
  */
 
-
 package org.irmacard.androidverifier;
 
 import java.util.ArrayList;
@@ -57,11 +56,14 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 /**
- * Main Activity for the IRMA android verifier app.
+ * Main Activity for the IRMA android verifier application.
+ * 
  * @author Maarten Everts, TNO.
- *
  */
 public class AnonCredCheckActivity extends Activity {
+
+    // 0x0064 is the id of the student credential
+	private static final short CREDID_STUDENT = (short)0x0064;
 	
 	CheckResultAdapter checkresults;
 	private NfcAdapter nfcA;
@@ -117,15 +119,15 @@ public class AnonCredCheckActivity extends Activity {
         ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
         		getApplicationContext().getResources().openRawResource(R.raw.specification));
         
-        // 0x0064 is the id of the student credential
-        idemixVerifySpec = new IdemixVerifySpecification(spec, (short)0x0064);
-        
+        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_STUDENT);     
     }
     
     @Override
     public void onResume() {
         super.onResume();
-        if (nfcA != null) nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
+        if (nfcA != null) {
+        	nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
+        }
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
             onNewIntent(getIntent());
         }
@@ -134,7 +136,9 @@ public class AnonCredCheckActivity extends Activity {
     @Override
     public void onPause() {
     	super.onPause();
-    	if (nfcA != null) nfcA.disableForegroundDispatch(this);
+    	if (nfcA != null) {
+    		nfcA.disableForegroundDispatch(this);
+    	}
     }
     
     public void onNewIntent(Intent intent) {
@@ -173,6 +177,7 @@ public class AnonCredCheckActivity extends Activity {
         inflater.inflate(R.menu.menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -234,14 +239,14 @@ public class AnonCredCheckActivity extends Activity {
         	int title_resource = R.string.verificationfailed_title;
 
         	switch (value) {
-			case CheckResult.STATE_VALID:
-				image_resource = R.drawable.green_check0350;
-				title_resource = R.string.foundcredential_title;
-				break;
-			case CheckResult.STATE_INVALID:
-				image_resource = R.drawable.red_cross0350;
-				title_resource = R.string.nocredential_title;
-				break;
+        		case CheckResult.STATE_VALID:
+        			image_resource = R.drawable.green_check0350;
+        			title_resource = R.string.foundcredential_title;
+        			break;
+        		case CheckResult.STATE_INVALID:
+        			image_resource = R.drawable.red_cross0350;
+        			title_resource = R.string.nocredential_title;
+        			break;
 			}
         	iv.setImageResource(image_resource);
             return new AlertDialog.Builder(getActivity())
