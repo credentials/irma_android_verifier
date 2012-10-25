@@ -56,13 +56,16 @@ import credentials.idemix.spec.IdemixVerifySpecification;
  * Main Activity for the IRMA android verifier application.
  * 
  * @author Maarten Everts, TNO.
- *
  */
 public class AnonCredCheckActivity extends Activity {
+<<<<<<< HEAD
 
     // 0x0064 is the id of the student credential
 	private static final short CREDID_STUDENT = (short)0x0064;
 	
+	CheckResultAdapter checkresults;
+=======
+>>>>>>> saveverifications
 	private NfcAdapter nfcA;
 	private PendingIntent mPendingIntent;
 	private IntentFilter[] mFilters;
@@ -228,6 +231,16 @@ public class AnonCredCheckActivity extends Activity {
         	int title_resource = R.string.verificationfailed_title;
 
         	switch (value) {
+<<<<<<< HEAD
+        		case CheckResult.STATE_VALID:
+        			image_resource = R.drawable.green_check0350;
+        			title_resource = R.string.foundcredential_title;
+        			break;
+        		case CheckResult.STATE_INVALID:
+        			image_resource = R.drawable.red_cross0350;
+        			title_resource = R.string.nocredential_title;
+        			break;
+=======
 			case Verification.RESULT_VALID:
 				image_resource = R.drawable.green_check0350;
 				title_resource = R.string.foundcredential_title;
@@ -236,6 +249,7 @@ public class AnonCredCheckActivity extends Activity {
 				image_resource = R.drawable.red_cross0350;
 				title_resource = R.string.nocredential_title;
 				break;
+>>>>>>> saveverifications
 			}
         	iv.setImageResource(image_resource);
             return new AlertDialog.Builder(getActivity())

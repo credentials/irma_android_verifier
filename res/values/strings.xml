@@ -5,6 +5,15 @@
     <string name="checkcredentialstitle">Student credential: Verifying...</string>
     <string name="foundcredential_title">Student credential: Valid credential found</string>
     <string name="nocredential_title">Student credential: No credential found!</string>
-    <string name="verificationfailed_title">Verification failed</string>  
+    <string name="verificationfailed_title">Verification failed</string>
     <string name="irmalogo">IRMA logo</string>
+    <string name="title_verification_detail">Verification Detail</string>
+    <string name="title_verification_list">Verifications</string>
+    <string name="verification_list_valid">Valid</string>
+    <string name="verification_list_invalid">Invalid</string>
+    <string name="verification_list_failed">Failed</string>
+	<string name="menu_history">History</string>
+	<string name="instruction_text">Please supply your IRMA card.</string>
+	<string name="credential_info">This terminal will only check whether you have a valid Student credential.</string>
+	
 </resources>

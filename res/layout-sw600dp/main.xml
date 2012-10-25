@@ -12,7 +12,7 @@
         android:layout_marginBottom="50dp"
         android:layout_marginTop="10dp"
         android:contentDescription="@string/irmalogo"
-        android:src="@drawable/irma_logo_400" />
+        android:src="@drawable/irma_logo_800" />
 
     <TextView
         android:id="@+id/instructiontext"
@@ -20,24 +20,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="99dp"
         android:gravity="center"
         android:text="@string/instruction_text"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20dp" />
+        android:textSize="36dp" />
 
     <TextView
         android:id="@+id/credentialinfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/irmaLogo"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="56dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_below="@+id/instructiontext"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="101dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
         android:gravity="center"
         android:text="@string/credential_info"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20dp" />
+        android:textSize="36dp" />
 
 </RelativeLayout>

@@ -1,0 +1,78 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:orientation="vertical">
+
+		<TextView
+		    android:id="@+id/resultlabel"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:text="Verification result"
+		    android:textColor="#FF909090"
+		    style="?android:attr/listSeparatorTextViewStyle" />
+		
+		<TextView
+		    android:id="@+id/resultfield"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Medium Text"
+		    android:textSize="62dp"
+		    android:padding="16dp" />
+		
+		<TextView
+		    android:id="@+id/timestamplabel"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:text="Verification timestamp"
+		    android:textColor="#FF909090"
+		    style="?android:attr/listSeparatorTextViewStyle" />
+		
+		<TextView
+		    android:id="@+id/timestampfield"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Medium Text"
+		    android:padding="16dp"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		<TextView
+		    android:id="@+id/carduidlabel"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:text="Card UID"
+		    android:textColor="#FF909090"
+		    style="?android:attr/listSeparatorTextViewStyle" />
+		
+		<TextView
+		    android:id="@+id/carduidfield"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Medium Text"
+		    android:typeface="monospace"
+		    android:padding="16dp"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
+		
+		<TextView
+		    android:id="@+id/infolabel"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:text="Additional info"
+		    android:textColor="#FF909090"
+		    style="?android:attr/listSeparatorTextViewStyle" />
+		
+		<TextView
+		    android:id="@+id/infofield"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Medium Text"
+		    android:padding="16dp"
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
+		        
+    </LinearLayout>
+</ScrollView>
