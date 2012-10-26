@@ -20,6 +20,11 @@
 
 package org.irmacard.androidverifier;
 
+import org.irmacard.credentials.Attributes;
+import org.irmacard.credentials.CredentialsException;
+import org.irmacard.credentials.idemix.IdemixCredentials;
+import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
+
 import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
 import android.app.Activity;
@@ -47,10 +52,6 @@ import android.widget.ProgressBar;
 import com.ibm.zurich.idmx.showproof.ProofSpec;
 import com.ibm.zurich.idmx.utils.StructureStore;
 
-import credentials.Attributes;
-import credentials.CredentialsException;
-import credentials.idemix.IdemixCredentials;
-import credentials.idemix.spec.IdemixVerifySpecification;
 
 /**
  * Main Activity for the IRMA android verifier application.
@@ -96,16 +97,16 @@ public class AnonCredCheckActivity extends Activity {
     }
     
     public void setupIdemix() {
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
+		StructureStore.getInstance().get("http://www.irmacard.org/org.irmacard.credentials/phase1/RU/sp.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.sp));
 		
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
+		StructureStore.getInstance().get("http://www.irmacard.org/org.irmacard.credentials/phase1/RU/gp.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.gp));
 
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
+        StructureStore.getInstance().get("http://www.irmacard.org/org.irmacard.credentials/phase1/RU/ipk.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.ipk));
 		
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
+        StructureStore.getInstance().get("http://www.irmacard.org/org.irmacard.credentials/phase1/RU/studentCard/structure.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.structure));
 
         ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
