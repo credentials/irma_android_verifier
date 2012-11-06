@@ -97,16 +97,16 @@ public class AnonCredCheckActivity extends Activity {
     }
     
     public void setupIdemix() {
-		StructureStore.getInstance().get("http://www.irmacard.org/org.irmacard.credentials/phase1/RU/sp.xml",
+		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.sp));
 		
-		StructureStore.getInstance().get("http://www.irmacard.org/org.irmacard.credentials/phase1/RU/gp.xml",
+		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.gp));
 
-        StructureStore.getInstance().get("http://www.irmacard.org/org.irmacard.credentials/phase1/RU/ipk.xml",
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.ipk));
 		
-        StructureStore.getInstance().get("http://www.irmacard.org/org.irmacard.credentials/phase1/RU/studentCard/structure.xml",
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.structure));
 
         ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
