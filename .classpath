@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/idemix_library"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/idemix_terminal"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/credentials_api"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/credentials_idemix"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
