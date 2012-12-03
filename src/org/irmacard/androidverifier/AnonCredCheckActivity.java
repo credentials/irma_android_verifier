@@ -225,16 +225,16 @@ public class AnonCredCheckActivity extends Activity {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
         	ImageView iv = new ImageView(getActivity().getApplicationContext());
         	int value = getArguments().getInt("value");
-        	int image_resource = R.drawable.orange_questionmark0350;
+        	int image_resource = R.drawable.irma_icon_warning_520px;
         	int title_resource = R.string.verificationfailed_title;
 
         	switch (value) {
 			case Verification.RESULT_VALID:
-				image_resource = R.drawable.green_check0350;
+				image_resource = R.drawable.irma_icon_ok_520px;
 				title_resource = R.string.foundcredential_title;
 				break;
 			case Verification.RESULT_INVALID:
-				image_resource = R.drawable.red_cross0350;
+				image_resource = R.drawable.irma_icon_missing_520px;
 				title_resource = R.string.nocredential_title;
 				break;
 			}

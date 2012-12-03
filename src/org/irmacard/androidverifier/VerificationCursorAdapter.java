@@ -27,11 +27,11 @@ public class VerificationCursorAdapter extends SimpleCursorAdapter {
 	@Override
 	public void setViewImage(ImageView v, String value) {
 		if (value.equals(Integer.toString(Verification.RESULT_VALID))) {
-			v.setImageResource(R.drawable.green_check0064);
+			v.setImageResource(R.drawable.irma_icon_ok_064px);
 		} else if (value.equals(Integer.toString(Verification.RESULT_INVALID))) {
-			v.setImageResource(R.drawable.red_cross0064);
+			v.setImageResource(R.drawable.irma_icon_missing_064px);
 		} else if (value.equals(Integer.toString(Verification.RESULT_FAILED))) {
-			v.setImageResource(R.drawable.orange_questionmark0064);
+			v.setImageResource(R.drawable.irma_icon_warning_064px);
 		}
 	}
 	@Override
