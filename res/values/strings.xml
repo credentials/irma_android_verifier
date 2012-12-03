@@ -14,6 +14,11 @@
     <string name="verification_list_failed">Failed</string>
 	<string name="menu_history">History</string>
 	<string name="instruction_text">Please supply your IRMA card.</string>
-	<string name="credential_info">This terminal will only check whether you have a valid Student credential.</string>
+	<string name="credential_info">Student credential</string>
+	<string name="status_waiting">Waiting for card</string>
+	<string name="status_checking">Checking credentials</string>
+	<string name="status_ok">Credential found</string>
+	<string name="status_missing">Credential missing</string>
+	<string name="status_warning">Try again</string>
 	
 </resources>

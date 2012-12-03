@@ -42,6 +42,7 @@ import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -76,6 +77,16 @@ public class AnonCredCheckActivity extends Activity {
 	private IdemixVerifySpecification idemixVerifySpec;
 	private byte[] lastTagUID;
 	private boolean useFullScreen = true;
+	private CountDownTimer cdt = null;
+	private static final int STATE_WAITING = 0;
+	private static final int STATE_CHECKING = 1;
+	private static final int STATE_RESULT_OK = 2;
+	private static final int STATE_RESULT_MISSING = 3;
+	private static final int STATE_RESULT_WARNING = 4;
+		
+	private int activityState = STATE_WAITING;
+	
+	private static final int WAITTIME = 6000; // Time until the status jumps back to STATE_WAITING
 	
     /** Called when the activity is first created. */
     @Override
@@ -84,7 +95,7 @@ public class AnonCredCheckActivity extends Activity {
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY); 
         setContentView(R.layout.main);
         getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.transparentshape));
-
+        
         // Prevent the screen from turning off
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // NFC stuff
@@ -98,7 +109,8 @@ public class AnonCredCheckActivity extends Activity {
 
         // Setup a tech list for all IsoDep cards
         mTechLists = new String[][] { new String[] { IsoDep.class.getName() } };
-        
+
+        setState(STATE_WAITING);
         setupIdemix();
     }
 
@@ -118,6 +130,73 @@ public class AnonCredCheckActivity extends Activity {
     public void toggleFullscreen(View v) {
     	useFullScreen = !useFullScreen;
     	setupScreen();
+    }
+    
+    private void setState(int state) {
+    	Log.i(TAG,"Set state: " + state);
+    	activityState = state;
+		((ProgressBar)findViewById(R.id.checkingprogressbar)).setVisibility(View.INVISIBLE);
+    	int imageResource = 0;
+    	int statusTextResource = 0;
+    	switch (activityState) {
+    	case STATE_WAITING:
+    		imageResource = R.drawable.irma_icon_nfcgrey1;
+    		statusTextResource = R.string.status_waiting;
+    		break;
+		case STATE_CHECKING:
+			imageResource = R.drawable.irma_icon_nfcgrey1;
+			((ProgressBar)findViewById(R.id.checkingprogressbar)).setVisibility(View.VISIBLE);
+			statusTextResource = R.string.status_checking;
+			break;
+		case STATE_RESULT_OK:
+			imageResource = R.drawable.irma_icon_ok_520px;
+			statusTextResource = R.string.status_ok;
+			break;
+		case STATE_RESULT_MISSING:
+			imageResource = R.drawable.irma_icon_missing_520px;
+			statusTextResource = R.string.status_missing;
+			break;
+		case STATE_RESULT_WARNING:
+			imageResource = R.drawable.irma_icon_warning_520px;
+			statusTextResource = R.string.status_warning;
+			break;
+		default:
+			break;
+		}
+    	
+    	final ProgressBar progress = (ProgressBar)findViewById(R.id.feedbackprogress);
+        progress.setMax(WAITTIME);
+        progress.setProgress(0);
+        
+    	if (activityState == STATE_RESULT_OK ||
+    			activityState == STATE_RESULT_MISSING || 
+    			activityState == STATE_RESULT_WARNING) {
+        	if (cdt != null) {
+        		cdt.cancel();
+        	}
+        	progress.setProgress(WAITTIME);
+        	cdt = new CountDownTimer(WAITTIME, 100) {
+
+        	     public void onTick(long millisUntilFinished) {
+        	    	 progress.setProgress((int) millisUntilFinished);
+        	    	 if (activityState == STATE_CHECKING) {
+        	    		 progress.setProgress(0);
+        	    		 cdt.cancel();
+        	    	 }
+        	     }
+
+        	     public void onFinish() {
+        	    	 if (activityState != STATE_CHECKING) {
+        	    		 setState(STATE_WAITING);
+        	    	 }
+        	    	 progress.setProgress(0);
+        	     }
+        	  }.start();
+    	}
+    	
+		((TextView)findViewById(R.id.statustext)).setText(statusTextResource);
+		((ImageView)findViewById(R.id.statusimage)).setImageResource(imageResource);
+    	
     }
     
     public void setupIdemix() {
@@ -151,10 +230,10 @@ public class AnonCredCheckActivity extends Activity {
         
         // Set the fonts, we have to do this like this because the font is supplied
         // with the application.
-        Typeface ubuntuFontM=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-M.ttf");
-        ((TextView)findViewById(R.id.instructiontext)).setTypeface(ubuntuFontM);
+        Typeface ubuntuFontR=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-R.ttf");
+        ((TextView)findViewById(R.id.statustext)).setTypeface(ubuntuFontR);
+        Typeface ubuntuFontM=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-B.ttf");
         ((TextView)findViewById(R.id.credentialinfo)).setTypeface(ubuntuFontM);
-        
         setupScreen();
     }
     
@@ -173,27 +252,25 @@ public class AnonCredCheckActivity extends Activity {
     	if (tag != null) {
     		lastTagUID = tagFromIntent.getId();
     		Log.i(TAG,"Found IsoDep tag!");
-    		showProgressDialog();
+    		setState(STATE_CHECKING);
     		new CheckCardCredentialTask().execute(tag);
     	}
     }
     
-    private void showResultDialog(int resultValue) {
-    	DialogFragment df = (DialogFragment)getFragmentManager().findFragmentByTag("checkingdialog");
-    	if (df != null) {
-    		df.dismiss();
-    	}
-    	DialogFragment newFragment = CheckResultDialogFragment.newInstance(resultValue);
-    	newFragment.show(getFragmentManager(), "resultdialog");    	
-    }
-    
-    private void showProgressDialog() {
-    	DialogFragment df = (DialogFragment)getFragmentManager().findFragmentByTag("resultdialog");
-    	if (df != null) {
-    		df.dismiss();
-    	}    	
-    	DialogFragment newFragment = ProgressDialogFragment.newInstance(R.string.checkcredentialstitle);
-    	newFragment.show(getFragmentManager(), "checkingdialog");    	
+    private void showResult(int resultValue) {
+    	switch (resultValue) {
+		case Verification.RESULT_VALID:
+			setState(STATE_RESULT_OK);
+			break;
+		case Verification.RESULT_INVALID:
+			setState(STATE_RESULT_WARNING);
+			break;
+		case Verification.RESULT_FAILED:
+			setState(STATE_RESULT_MISSING);
+			break;
+		default:
+			break;
+		}
     }
     
     @Override
@@ -212,76 +289,6 @@ public class AnonCredCheckActivity extends Activity {
         	return true;
         default:
         	return super.onOptionsItemSelected(item);
-        }
-    }
-    
-    public static class ProgressDialogFragment extends DialogFragment {
-
-        public static ProgressDialogFragment newInstance(int title) {
-            ProgressDialogFragment frag = new ProgressDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("title", title);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle(getArguments().getInt("title"))
-                    .setView(new ProgressBar(getActivity().getApplicationContext(), null,
-        					android.R.attr.progressBarStyleLarge))
-                    .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                            	dialog.dismiss();
-                            }
-                        }
-                    )
-                    .create();
-        }
-    }
-
-    public static class CheckResultDialogFragment extends DialogFragment {
-
-        public static CheckResultDialogFragment newInstance(int value) {
-            CheckResultDialogFragment frag = new CheckResultDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("value", value);
-            frag.setArguments(args);
-            return frag;
-        }
-
-       
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-        	ImageView iv = new ImageView(getActivity().getApplicationContext());
-        	int value = getArguments().getInt("value");
-        	int image_resource = R.drawable.irma_icon_warning_520px;
-        	int title_resource = R.string.verificationfailed_title;
-
-        	switch (value) {
-			case Verification.RESULT_VALID:
-				image_resource = R.drawable.irma_icon_ok_520px;
-				title_resource = R.string.foundcredential_title;
-				break;
-			case Verification.RESULT_INVALID:
-				image_resource = R.drawable.irma_icon_missing_520px;
-				title_resource = R.string.nocredential_title;
-				break;
-			}
-        	iv.setImageResource(image_resource);
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle(title_resource)
-                    .setView(iv)
-                    .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                            	dialog.dismiss();
-                            }
-                        }
-                    )
-                    .create();
         }
     }
     
@@ -329,7 +336,7 @@ public class AnonCredCheckActivity extends Activity {
 	        		VerificationData.Verifications.CONTENT_URI,
 	        	    mNewValues
 	        	);
-			AnonCredCheckActivity.this.showResultDialog(verification.getResult());
+			AnonCredCheckActivity.this.showResult(verification.getResult());
 		}
     }
 }
