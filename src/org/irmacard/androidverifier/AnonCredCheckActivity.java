@@ -36,6 +36,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
@@ -50,6 +51,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ibm.zurich.idmx.showproof.ProofSpec;
 import com.ibm.zurich.idmx.utils.StructureStore;
@@ -146,6 +148,13 @@ public class AnonCredCheckActivity extends Activity {
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
             onNewIntent(getIntent());
         }
+        
+        // Set the fonts, we have to do this like this because the font is supplied
+        // with the application.
+        Typeface ubuntuFontM=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-M.ttf");
+        ((TextView)findViewById(R.id.instructiontext)).setTypeface(ubuntuFontM);
+        ((TextView)findViewById(R.id.credentialinfo)).setTypeface(ubuntuFontM);
+        
         setupScreen();
     }
     
