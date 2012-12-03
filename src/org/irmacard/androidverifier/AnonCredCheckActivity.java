@@ -45,6 +45,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -71,16 +73,18 @@ public class AnonCredCheckActivity extends Activity {
 	private final String TAG = "AnonCredCheck";
 	private IdemixVerifySpecification idemixVerifySpec;
 	private byte[] lastTagUID;
+	private boolean useFullScreen = true;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY); 
         setContentView(R.layout.main);
-        
+        getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.transparentshape));
+
         // Prevent the screen from turning off
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        
         // NFC stuff
         nfcA = NfcAdapter.getDefaultAdapter(getApplicationContext());
         mPendingIntent = PendingIntent.getActivity(this, 0,
@@ -94,6 +98,24 @@ public class AnonCredCheckActivity extends Activity {
         mTechLists = new String[][] { new String[] { IsoDep.class.getName() } };
         
         setupIdemix();
+    }
+
+    
+    void setupScreen() {
+    	if (useFullScreen) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            getActionBar().hide();
+    	} else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getActionBar().show();
+    	}
+    }
+    
+    public void toggleFullscreen(View v) {
+    	useFullScreen = !useFullScreen;
+    	setupScreen();
     }
     
     public void setupIdemix() {
@@ -124,6 +146,7 @@ public class AnonCredCheckActivity extends Activity {
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
             onNewIntent(getIntent());
         }
+        setupScreen();
     }
     
     @Override
