@@ -36,7 +36,8 @@
         android:gravity="center"
         android:text="@string/instruction_text"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="36dp" />
+        android:textSize="36dp"
+        android:textColor="@color/irmadarkblue" />
 
     <TextView
         android:id="@+id/credentialinfo"
@@ -50,6 +51,7 @@
         android:gravity="center"
         android:text="@string/credential_info"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="36dp" />
+        android:textSize="36dp"
+        android:textColor="@color/irmadarkblue" />
 
 </RelativeLayout>
