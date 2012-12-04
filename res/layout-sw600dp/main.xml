@@ -13,7 +13,7 @@
         android:layout_marginBottom="100dp"
         android:layout_marginLeft="61dp"
         android:layout_marginRight="61dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="100dp"
         android:src="@drawable/whiteshaperounded" />
 
     <ImageView
@@ -23,7 +23,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="50dp"
         android:contentDescription="@string/irmalogo"
         android:src="@drawable/irma_logo_300" />
 
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/statusimage"
         android:layout_below="@+id/irmaLogo"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="25dp"
         android:gravity="center"
         android:text="@string/credential_info"
         android:textAppearance="?android:attr/textAppearanceLarge"
