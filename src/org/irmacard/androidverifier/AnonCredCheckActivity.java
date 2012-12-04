@@ -310,7 +310,7 @@ public class AnonCredCheckActivity extends Activity {
 		        	Log.i(TAG,"The proof verified!");
 		        	return new Verification(Verification.RESULT_VALID, lastTagUID, "");
 		        }				
-			} catch (CredentialsException e) {
+			} catch (Exception e) {
 				Log.e(TAG, "Idemix verification threw an Exception!");
 				e.printStackTrace();
 				return new Verification(Verification.RESULT_FAILED, lastTagUID, "Exception message: " + e.getMessage());
