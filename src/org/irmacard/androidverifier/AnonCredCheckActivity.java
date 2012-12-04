@@ -216,9 +216,6 @@ public class AnonCredCheckActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        if (nfcA != null) {
-        	nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
-        }
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
             onNewIntent(getIntent());
         }
@@ -235,9 +232,6 @@ public class AnonCredCheckActivity extends Activity {
     @Override
     public void onPause() {
     	super.onPause();
-    	if (nfcA != null) {
-    		nfcA.disableForegroundDispatch(this);
-    	}
     }
 
 
