@@ -126,6 +126,9 @@ public class AnonCredCheckActivity extends Activity {
     
     public void toggleFullscreen(View v) {
     	useFullScreen = !useFullScreen;
+    	if (useFullScreen) {
+    		v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    	}
     	setupScreen();
     }
     
