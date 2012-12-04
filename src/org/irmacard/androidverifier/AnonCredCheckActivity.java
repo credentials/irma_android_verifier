@@ -259,10 +259,10 @@ public class AnonCredCheckActivity extends Activity {
 			setState(STATE_RESULT_OK);
 			break;
 		case Verification.RESULT_INVALID:
-			setState(STATE_RESULT_WARNING);
+			setState(STATE_RESULT_MISSING);
 			break;
 		case Verification.RESULT_FAILED:
-			setState(STATE_RESULT_MISSING);
+			setState(STATE_RESULT_WARNING);
 			break;
 		default:
 			break;
