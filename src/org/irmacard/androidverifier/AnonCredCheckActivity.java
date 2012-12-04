@@ -73,7 +73,7 @@ public class AnonCredCheckActivity extends Activity {
 	private final String TAG = "AnonCredCheck";
 	private IdemixVerifySpecification idemixVerifySpec;
 	private byte[] lastTagUID;
-	private boolean useFullScreen = false;
+	private boolean useFullScreen = true;
 	private CountDownTimer cdt = null;
 	private static final int STATE_WAITING = 0;
 	private static final int STATE_CHECKING = 1;
@@ -93,6 +93,8 @@ public class AnonCredCheckActivity extends Activity {
         setContentView(R.layout.main);
         getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.transparentshape));
         
+        findViewById(R.id.mainshape).setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        
         // Prevent the screen from turning off
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // NFC stuff
@@ -108,6 +110,7 @@ public class AnonCredCheckActivity extends Activity {
         mTechLists = new String[][] { new String[] { IsoDep.class.getName() } };
 
         setState(STATE_WAITING);
+
         setupIdemix();
     }
 
@@ -244,7 +247,8 @@ public class AnonCredCheckActivity extends Activity {
     		nfcA.disableForegroundDispatch(this);
     	}
     }
-    
+
+
     public void onNewIntent(Intent intent) {
         Log.i(TAG, "Discovered tag with intent: " + intent);
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);

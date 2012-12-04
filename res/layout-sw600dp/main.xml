@@ -6,7 +6,7 @@
     android:onClick="toggleFullscreen" >
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/mainshape"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
@@ -25,28 +25,36 @@
         android:contentDescription="@string/irmalogo"
         android:src="@drawable/irma_logo_300" />
 
-    <TextView
-        android:id="@+id/credentialinfo"
+    <ProgressBar
+        android:id="@+id/feedbackprogress"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageView1"
-        android:layout_below="@+id/irmaLogo"
-        android:layout_marginLeft="54dp"
-        android:layout_marginTop="38dp"
-        android:gravity="center"
-        android:text="@string/credential_info"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/irmadarkblue"
-        android:textSize="36dp" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" />
 
     <ImageView
         android:id="@+id/statusimage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView1"
+        android:layout_alignBottom="@+id/mainshape"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="111dp"
+        android:layout_marginBottom="121dp"
         android:src="@drawable/irma_icon_nfcgrey1" />
+
+    <TextView
+        android:id="@+id/credentialinfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/statusimage"
+        android:layout_below="@+id/irmaLogo"
+        android:layout_marginTop="45dp"
+        android:gravity="center"
+        android:text="@string/credential_info"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/irmadarkblue"
+        android:textSize="36dp" />
 
     <TextView
         android:id="@+id/statustext"
@@ -66,14 +74,5 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/statusimage"
         android:layout_alignTop="@+id/statustext" />
-
-    <ProgressBar
-        android:id="@+id/feedbackprogress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" />
 
 </RelativeLayout>
