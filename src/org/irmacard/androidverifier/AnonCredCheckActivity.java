@@ -73,7 +73,7 @@ public class AnonCredCheckActivity extends Activity {
 	private final String TAG = "AnonCredCheck";
 	private IdemixVerifySpecification idemixVerifySpec;
 	private byte[] lastTagUID;
-	private boolean useFullScreen = true;
+	private boolean useFullScreen = false;
 	private CountDownTimer cdt = null;
 	private static final int STATE_WAITING = 0;
 	private static final int STATE_CHECKING = 1;
