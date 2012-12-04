@@ -167,9 +167,7 @@ public class AnonCredCheckActivity extends Activity {
 			break;
 		}
     	
-    	final ProgressBar progress = (ProgressBar)findViewById(R.id.feedbackprogress);
-        progress.setMax(WAITTIME);
-        progress.setProgress(0);
+
         
     	if (activityState == STATE_RESULT_OK ||
     			activityState == STATE_RESULT_MISSING || 
@@ -177,22 +175,16 @@ public class AnonCredCheckActivity extends Activity {
         	if (cdt != null) {
         		cdt.cancel();
         	}
-        	progress.setProgress(WAITTIME);
         	cdt = new CountDownTimer(WAITTIME, 100) {
 
         	     public void onTick(long millisUntilFinished) {
-        	    	 progress.setProgress((int) millisUntilFinished);
-        	    	 if (activityState == STATE_CHECKING) {
-        	    		 progress.setProgress(0);
-        	    		 cdt.cancel();
-        	    	 }
+
         	     }
 
         	     public void onFinish() {
         	    	 if (activityState != STATE_CHECKING) {
         	    		 setState(STATE_WAITING);
         	    	 }
-        	    	 progress.setProgress(0);
         	     }
         	  }.start();
     	}

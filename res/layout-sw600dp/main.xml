@@ -10,8 +10,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
-        android:layout_margin="60dp"
+        android:layout_marginBottom="100dp"
         android:layout_marginLeft="61dp"
+        android:layout_marginRight="61dp"
+        android:layout_marginTop="60dp"
         android:src="@drawable/whiteshaperounded" />
 
     <ImageView
@@ -24,15 +26,6 @@
         android:layout_marginTop="10dp"
         android:contentDescription="@string/irmalogo"
         android:src="@drawable/irma_logo_300" />
-
-    <ProgressBar
-        android:id="@+id/feedbackprogress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" />
 
     <ImageView
         android:id="@+id/statusimage"
@@ -74,5 +67,26 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/statusimage"
         android:layout_alignTop="@+id/statustext" />
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/target"
+        android:layout_alignBottom="@+id/target"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/irma_arrow_080px" />
+
+    <ImageView
+        android:id="@+id/target"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignBottom="@+id/mainshape"
+        android:layout_alignRight="@+id/mainshape"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="-75dp"
+        android:background="@drawable/targetshape"
+        android:src="@drawable/albronlogo_200" />
 
 </RelativeLayout>
