@@ -61,12 +61,6 @@
         android:textColor="@color/irmadarkblue"
         android:textSize="30dp" />
 
-    <ProgressBar
-        android:id="@+id/checkingprogressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/statusimage"
-        android:layout_alignTop="@+id/statustext" />
 
     <org.irmacard.androidverifier.AnimatedArrow
         android:id="@+id/animatedArrow"

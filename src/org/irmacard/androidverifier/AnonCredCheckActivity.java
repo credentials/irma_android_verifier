@@ -137,7 +137,6 @@ public class AnonCredCheckActivity extends Activity {
     private void setState(int state) {
     	Log.i(TAG,"Set state: " + state);
     	activityState = state;
-		((ProgressBar)findViewById(R.id.checkingprogressbar)).setVisibility(View.INVISIBLE);
     	int imageResource = 0;
     	int statusTextResource = 0;
     	((AnimatedArrow)findViewById(R.id.animatedArrow)).stopAnimation();
@@ -149,7 +148,6 @@ public class AnonCredCheckActivity extends Activity {
 		case STATE_CHECKING:
 			((AnimatedArrow)findViewById(R.id.animatedArrow)).startAnimation();
 			imageResource = R.drawable.irma_icon_card_found_520px;
-			((ProgressBar)findViewById(R.id.checkingprogressbar)).setVisibility(View.VISIBLE);
 			statusTextResource = R.string.status_checking;
 			break;
 		case STATE_RESULT_OK:
