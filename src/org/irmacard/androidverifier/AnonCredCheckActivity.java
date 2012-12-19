@@ -24,7 +24,6 @@ import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
 
 import org.irmacard.credentials.Attributes;
-import org.irmacard.credentials.CredentialsException;
 import org.irmacard.credentials.idemix.IdemixCredentials;
 import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
 
@@ -217,8 +216,12 @@ public class AnonCredCheckActivity extends Activity {
     public void onResume() {
         super.onResume();
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
-            onNewIntent(getIntent());
+            processIntent(getIntent());
+        }        
+        if (nfcA != null) {
+        	nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         }
+
         
         // Set the fonts, we have to do this like this because the font is supplied
         // with the application.
@@ -232,19 +235,30 @@ public class AnonCredCheckActivity extends Activity {
     @Override
     public void onPause() {
     	super.onPause();
+    	if (nfcA != null) {
+    		nfcA.disableForegroundDispatch(this);
+    	}
     }
 
-
-    public void onNewIntent(Intent intent) {
-        Log.i(TAG, "Discovered tag with intent: " + intent);
+    public void processIntent(Intent intent) {
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
     	IsoDep tag = IsoDep.get(tagFromIntent);
     	if (tag != null) {
     		lastTagUID = tagFromIntent.getId();
     		Log.i(TAG,"Found IsoDep tag!");
-    		setState(STATE_CHECKING);
-    		new CheckCardCredentialTask().execute(tag);
-    	}
+    		
+    		// Make sure we're not already communicating with a card
+    		if (activityState != STATE_CHECKING) {
+	    		setState(STATE_CHECKING);
+	    		new CheckCardCredentialTask().execute(tag);
+    		}
+    	}    	
+    }
+    
+    @Override
+    public void onNewIntent(Intent intent) {
+        Log.i(TAG, "Discovered tag with intent: " + intent);
+        setIntent(intent);
     }
     
     private void showResult(int resultValue) {
@@ -297,6 +311,9 @@ public class AnonCredCheckActivity extends Activity {
 			Attributes attr = null;
 			try {
 				attr = ic.verify(idemixVerifySpec);
+				cs.close();
+				tag.close();
+				
 				if (attr == null) {
 		            Log.i(TAG,"The proof does not verify");
 		            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Proof did not verify.");
