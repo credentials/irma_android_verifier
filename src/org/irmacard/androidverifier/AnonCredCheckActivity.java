@@ -88,7 +88,7 @@ public class AnonCredCheckActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY); 
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.main);
         getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.transparentshape));
         
@@ -140,12 +140,14 @@ public class AnonCredCheckActivity extends Activity {
 		((ProgressBar)findViewById(R.id.checkingprogressbar)).setVisibility(View.INVISIBLE);
     	int imageResource = 0;
     	int statusTextResource = 0;
+    	((AnimatedArrow)findViewById(R.id.animatedArrow)).stopAnimation();
     	switch (activityState) {
     	case STATE_WAITING:
     		imageResource = R.drawable.irma_icon_place_card_520px;
     		statusTextResource = R.string.status_waiting;
     		break;
 		case STATE_CHECKING:
+			((AnimatedArrow)findViewById(R.id.animatedArrow)).startAnimation();
 			imageResource = R.drawable.irma_icon_card_found_520px;
 			((ProgressBar)findViewById(R.id.checkingprogressbar)).setVisibility(View.VISIBLE);
 			statusTextResource = R.string.status_checking;

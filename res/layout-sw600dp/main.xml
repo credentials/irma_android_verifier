@@ -68,15 +68,16 @@
         android:layout_alignRight="@+id/statusimage"
         android:layout_alignTop="@+id/statustext" />
 
-    <ImageView
-        android:id="@+id/arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <org.irmacard.androidverifier.AnimatedArrow
+        android:id="@+id/animatedArrow"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_toLeftOf="@+id/target"
         android:layout_alignBottom="@+id/target"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:src="@drawable/irma_arrow_080px" />
+        android:layout_marginBottom="10dp" />
+    
+
 
     <ImageView
         android:id="@+id/target"
@@ -88,5 +89,7 @@
         android:layout_marginBottom="-75dp"
         android:background="@drawable/targetshape"
         android:src="@drawable/albronlogo_200" />
+
+
 
 </RelativeLayout>
