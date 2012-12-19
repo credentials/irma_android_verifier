@@ -143,11 +143,11 @@ public class AnonCredCheckActivity extends Activity {
     	int statusTextResource = 0;
     	switch (activityState) {
     	case STATE_WAITING:
-    		imageResource = R.drawable.irma_icon_nfcgrey1;
+    		imageResource = R.drawable.irma_icon_place_card_520px;
     		statusTextResource = R.string.status_waiting;
     		break;
 		case STATE_CHECKING:
-			imageResource = R.drawable.irma_icon_nfcgrey1;
+			imageResource = R.drawable.irma_icon_card_found_520px;
 			((ProgressBar)findViewById(R.id.checkingprogressbar)).setVisibility(View.VISIBLE);
 			statusTextResource = R.string.status_checking;
 			break;
