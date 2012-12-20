@@ -73,7 +73,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="-60dp"
         android:background="@drawable/targetshape"
-        android:src="@drawable/albronlogo_200" />
+        android:src="@drawable/kapper" />
 
     <ImageView
         android:id="@+id/statusimage"
