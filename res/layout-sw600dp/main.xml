@@ -47,7 +47,7 @@
         android:text="@string/credential_info"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/irmadarkblue"
-        android:textSize="36dp" />
+        android:textSize="48dp" />
 
     <TextView
         android:id="@+id/statustext"
@@ -59,7 +59,7 @@
         android:text="@string/status_waiting"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/irmadarkblue"
-        android:textSize="30dp" />
+        android:textSize="34dp" />
 
 
     <org.irmacard.androidverifier.AnimatedArrow
