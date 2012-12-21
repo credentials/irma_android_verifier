@@ -15,10 +15,10 @@
 	<string name="menu_history">History</string>
 	<string name="instruction_text">Please supply your IRMA card.</string>
 	<string name="credential_info">Student</string>
-	<string name="status_waiting">Waiting for card...</string>
-	<string name="status_checking">Checking credential...</string>
-	<string name="status_ok">Credential found.</string>
-	<string name="status_missing">Credential missing.</string>
-	<string name="status_warning">Try again.</string>
+	<string name="status_waiting">Wacht op kaart...</string>
+	<string name="status_checking">Attribuut controleren...</string>
+	<string name="status_ok">Attribuut gevonden.</string>
+	<string name="status_missing">Attribuut niet aanwezig.</string>
+	<string name="status_warning">Fout, probeer opnieuw.</string>
 	
 </resources>
