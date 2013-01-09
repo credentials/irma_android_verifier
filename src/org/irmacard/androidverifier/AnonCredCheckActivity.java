@@ -62,7 +62,7 @@ import com.ibm.zurich.idmx.utils.StructureStore;
 public class AnonCredCheckActivity extends Activity {
 
     // 0x0064 is the id of the student credential
-	private static final short CREDID_STUDENT = (short)0x0064;
+	private static final short CREDID_AGE = (short)0x000A;
 	
 	private NfcAdapter nfcA;
 	private PendingIntent mPendingIntent;
@@ -193,22 +193,22 @@ public class AnonCredCheckActivity extends Activity {
     }
     
     public void setupIdemix() {
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
+		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/sp.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.sp));
 		
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
+		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/gp.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.gp));
 
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/ipk.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.ipk));
 		
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/ageLower/structure.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.structure));
 
         ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
         		getApplicationContext().getResources().openRawResource(R.raw.specification));
         
-        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_STUDENT);     
+        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_AGE);     
     }
     
     @Override
@@ -317,8 +317,13 @@ public class AnonCredCheckActivity extends Activity {
 		            Log.i(TAG,"The proof does not verify");
 		            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Proof did not verify.");
 		        } else {
-		        	Log.i(TAG,"The proof verified!");
-		        	return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+	        		Log.i(TAG,"The proof verified!");
+		        	String age = new String(attr.get("over18"));
+		        	if (age.equalsIgnoreCase("yes")) {
+		        		return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+		        	} else {
+		        		return new Verification(Verification.RESULT_INVALID, lastTagUID, "Not over 18");		        		
+		        	}
 		        }				
 			} catch (Exception e) {
 				Log.e(TAG, "Idemix verification threw an Exception!");

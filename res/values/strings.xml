@@ -14,7 +14,7 @@
     <string name="verification_list_failed">Failed</string>
 	<string name="menu_history">History</string>
 	<string name="instruction_text">Please supply your IRMA card.</string>
-	<string name="credential_info">Student</string>
+	<string name="credential_info">Leeftijd: 18+\nLand: Nederland</string>
 	<string name="status_waiting">Wacht op kaart...</string>
 	<string name="status_checking">Attribuut controleren...</string>
 	<string name="status_ok">Attribuut gevonden.</string>
