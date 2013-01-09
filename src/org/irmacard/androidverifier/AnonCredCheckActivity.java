@@ -63,13 +63,15 @@ public class AnonCredCheckActivity extends Activity {
 
     // 0x0064 is the id of the student credential
 	private static final short CREDID_AGE = (short)0x000A;
+	private static final short CREDID_ADDRESS = (short)0x000B;
 	
 	private NfcAdapter nfcA;
 	private PendingIntent mPendingIntent;
 	private IntentFilter[] mFilters;
 	private String[][] mTechLists;
 	private final String TAG = "AnonCredCheck";
-	private IdemixVerifySpecification idemixVerifySpec;
+	private IdemixVerifySpecification idemixAgeVerifySpec;
+	private IdemixVerifySpecification idemixAddressVerifySpec;
 	private byte[] lastTagUID;
 	private boolean useFullScreen = true;
 	private CountDownTimer cdt = null;
@@ -203,12 +205,19 @@ public class AnonCredCheckActivity extends Activity {
         		getApplicationContext().getResources().openRawResource(R.raw.ipk));
 		
         StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/ageLower/structure.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.structure));
+        		getApplicationContext().getResources().openRawResource(R.raw.structure_agelower));
 
-        ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
-        		getApplicationContext().getResources().openRawResource(R.raw.specification));
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/address/structure.xml",
+        		getApplicationContext().getResources().openRawResource(R.raw.structure_address));
+
+        ProofSpec spec_age = (ProofSpec) StructureStore.getInstance().get("specification",
+        		getApplicationContext().getResources().openRawResource(R.raw.specification_agelower));
         
-        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_AGE);     
+        ProofSpec spec_address = (ProofSpec) StructureStore.getInstance().get("specification",
+        		getApplicationContext().getResources().openRawResource(R.raw.specification_address));
+
+        idemixAgeVerifySpec = new IdemixVerifySpecification(spec_age, CREDID_AGE);
+        idemixAddressVerifySpec = new IdemixVerifySpecification(spec_address, CREDID_ADDRESS);
     }
     
     @Override
@@ -307,20 +316,33 @@ public class AnonCredCheckActivity extends Activity {
 			CardService cs = new IsoDepCardService(tag);
 
 			IdemixCredentials ic = new IdemixCredentials(cs);
-			Attributes attr = null;
+			Attributes attrAge = null;
+			Attributes attrAddress = null;
 			try {
-				attr = ic.verify(idemixVerifySpec);
+				attrAge = ic.verify(idemixAgeVerifySpec);
+				attrAddress = ic.verify(idemixAddressVerifySpec);
+				
 				cs.close();
 				tag.close();
 				
-				if (attr == null) {
-		            Log.i(TAG,"The proof does not verify");
-		            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Proof did not verify.");
+				if (attrAge == null) {
+		            Log.i(TAG,"The age proof does not verify");
+		            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Age proof did not verify.");
 		        } else {
-	        		Log.i(TAG,"The proof verified!");
-		        	String age = new String(attr.get("over18"));
+	        		Log.i(TAG,"The age proof verified!");
+		        	String age = new String(attrAge.get("over18"));
 		        	if (age.equalsIgnoreCase("yes")) {
-		        		return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+		        		if (attrAddress == null) {
+				            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Address proof did not verify.");		        			
+		        		} else {
+			        		Log.i(TAG,"The address proof verified!");
+				        	String country = new String(attrAge.get("country"));
+				        	if (country.equalsIgnoreCase("Nederland")) {
+				        		return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+				        	} else {
+				        		return new Verification(Verification.RESULT_INVALID, lastTagUID, "Not in NL");		        		
+				        	}
+		        		}
 		        	} else {
 		        		return new Verification(Verification.RESULT_INVALID, lastTagUID, "Not over 18");		        		
 		        	}

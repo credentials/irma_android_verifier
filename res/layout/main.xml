@@ -34,7 +34,7 @@
         android:layout_alignLeft="@+id/statusimage"
         android:layout_below="@+id/irmaLogo"
         android:layout_marginTop="5dp"
-        android:gravity="center"
+        android:gravity="left"
         android:text="@string/credential_info"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/irmadarkblue"
