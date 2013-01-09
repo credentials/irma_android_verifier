@@ -312,14 +312,17 @@ public class AnonCredCheckActivity extends Activity {
 				attr = ic.verify(idemixVerifySpec);
 				cs.close();
 				tag.close();
-				
+
 				if (attr == null) {
-		            Log.i(TAG,"The proof does not verify");
-		            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Proof did not verify.");
-		        } else {
-		        	Log.i(TAG,"The proof verified!");
-		        	return new Verification(Verification.RESULT_VALID, lastTagUID, "");
-		        }				
+					Log.i(TAG,"The proof does not verify");
+					return new Verification(Verification.RESULT_INVALID, lastTagUID, "Proof did not verify.");
+				} else {
+					Log.i(TAG,"The proof verified!");
+					String city = new String(attr.get("city"));
+					((TextView)findViewById(R.id.statustext)).setText(city);
+					// TODO: show city.
+					return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+				}	
 			} catch (Exception e) {
 				Log.e(TAG, "Idemix verification threw an Exception!");
 				e.printStackTrace();
@@ -342,7 +345,9 @@ public class AnonCredCheckActivity extends Activity {
 	        		VerificationData.Verifications.CONTENT_URI,
 	        	    mNewValues
 	        	);
-			AnonCredCheckActivity.this.showResult(verification.getResult());
+	        if (verification.getResult() != Verification.RESULT_VALID) {
+	        	AnonCredCheckActivity.this.showResult(verification.getResult());
+	        }
 		}
     }
 }
