@@ -61,8 +61,8 @@ import com.ibm.zurich.idmx.utils.StructureStore;
  */
 public class AnonCredCheckActivity extends Activity {
 
-    // 0x0064 is the id of the student credential
-	private static final short CREDID_STUDENT = (short)0x0064;
+    // 0x000B is the id of the address credential
+	private static final short CREDID_ADDRESS = (short)0x000B;
 	
 	private NfcAdapter nfcA;
 	private PendingIntent mPendingIntent;
@@ -193,22 +193,22 @@ public class AnonCredCheckActivity extends Activity {
     }
     
     public void setupIdemix() {
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
+		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/sp.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.sp));
 		
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
+		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/gp.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.gp));
 
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/ipk.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.ipk));
 		
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
+        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/address/structure.xml",
         		getApplicationContext().getResources().openRawResource(R.raw.structure));
 
         ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
         		getApplicationContext().getResources().openRawResource(R.raw.specification));
         
-        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_STUDENT);     
+        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_ADDRESS);     
     }
     
     @Override
