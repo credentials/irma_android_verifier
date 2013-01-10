@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/mainshape"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="121dp"
+        android:layout_marginBottom="80dp"
         android:src="@drawable/irma_icon_place_card_520px" />
 
     <TextView
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/statusimage"
         android:layout_below="@+id/irmaLogo"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:gravity="left"
         android:text="@string/credential_info"
         android:textAppearance="?android:attr/textAppearanceLarge"

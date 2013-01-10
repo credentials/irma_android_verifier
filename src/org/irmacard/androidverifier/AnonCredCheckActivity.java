@@ -336,7 +336,10 @@ public class AnonCredCheckActivity extends Activity {
 				            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Address proof did not verify.");		        			
 		        		} else {
 			        		Log.i(TAG,"The address proof verified!");
-				        	String country = new String(attrAge.get("country"));
+			        		for(String k : attrAddress.getIdentifiers() ) {
+			        			Log.i(TAG, k + ": " + new String(attrAddress.get(k)));
+			        		}
+				        	String country = new String(attrAddress.get("over12"));
 				        	if (country.equalsIgnoreCase("Nederland")) {
 				        		return new Verification(Verification.RESULT_VALID, lastTagUID, "");
 				        	} else {
