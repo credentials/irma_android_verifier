@@ -276,6 +276,11 @@ public class AnonCredCheckActivity extends Activity {
 		}
     }
     
+    private void showResult(int resultValue, String value) {
+    	showResult(resultValue);
+    	((TextView)findViewById(R.id.statustext)).setText(value);
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -319,9 +324,9 @@ public class AnonCredCheckActivity extends Activity {
 				} else {
 					Log.i(TAG,"The proof verified!");
 					String city = new String(attr.get("city"));
-					((TextView)findViewById(R.id.statustext)).setText(city);
+					
 					// TODO: show city.
-					return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+					return new Verification(Verification.RESULT_VALID, lastTagUID, city);
 				}	
 			} catch (Exception e) {
 				Log.e(TAG, "Idemix verification threw an Exception!");
@@ -347,6 +352,8 @@ public class AnonCredCheckActivity extends Activity {
 	        	);
 	        if (verification.getResult() != Verification.RESULT_VALID) {
 	        	AnonCredCheckActivity.this.showResult(verification.getResult());
+	        } else { 
+	        	AnonCredCheckActivity.this.showResult(verification.getResult(), verification.getInfo());
 	        }
 		}
     }

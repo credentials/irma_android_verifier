@@ -82,7 +82,7 @@
         android:layout_marginRight="30dp"
         android:layout_marginBottom="-75dp"
         android:background="@drawable/targetshape"
-        android:src="@drawable/kapper" />
+        android:src="@drawable/stadspas" />
 
 
 
