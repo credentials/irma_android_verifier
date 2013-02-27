@@ -20,13 +20,14 @@
 
 package org.irmacard.androidverifier;
 
+import net.sourceforge.scuba.smartcards.CardService;
+import net.sourceforge.scuba.smartcards.IsoDepCardService;
+
 import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.CredentialsException;
 import org.irmacard.credentials.idemix.IdemixCredentials;
 import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
 
-import net.sourceforge.scuba.smartcards.CardService;
-import net.sourceforge.scuba.smartcards.IsoDepCardService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
