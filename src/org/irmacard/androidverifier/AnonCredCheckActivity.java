@@ -20,6 +20,8 @@
 
 package org.irmacard.androidverifier;
 
+import java.util.Locale;
+
 import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
 
@@ -38,6 +40,7 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -82,12 +85,18 @@ public class AnonCredCheckActivity extends Activity {
 	private int activityState = STATE_WAITING;
 	
 	private static final int WAITTIME = 6000; // Time until the status jumps back to STATE_WAITING
+	private static final String language = "en";
 	
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        Configuration config = new Configuration(getResources().getConfiguration());
+        config.locale = new Locale(language);
+        getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+        
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.main);
         getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.transparentshape));
