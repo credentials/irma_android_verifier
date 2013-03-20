@@ -23,10 +23,14 @@ package org.irmacard.androidverifier;
 import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
 
+import org.irmacard.android.util.credentials.AndroidWalker;
 import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.idemix.IdemixCredentials;
 import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
-
+import org.irmacard.credentials.idemix.util.CredentialInformation;
+import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
+import org.irmacard.credentials.info.DescriptionStore;
+import org.irmacard.credentials.info.InfoException;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -61,9 +65,6 @@ import com.ibm.zurich.idmx.utils.StructureStore;
  *
  */
 public class AnonCredCheckActivity extends Activity {
-
-    // 0x0064 is the id of the student credential
-	private static final short CREDID_STUDENT = (short)0x0064;
 	
 	private NfcAdapter nfcA;
 	private PendingIntent mPendingIntent;
@@ -83,6 +84,7 @@ public class AnonCredCheckActivity extends Activity {
 	private int activityState = STATE_WAITING;
 	
 	private static final int WAITTIME = 6000; // Time until the status jumps back to STATE_WAITING
+	
 	
     /** Called when the activity is first created. */
     @Override
@@ -110,7 +112,7 @@ public class AnonCredCheckActivity extends Activity {
 
         setState(STATE_WAITING);
 
-        setupIdemix();
+        setupCredentials();
     }
 
     
@@ -193,23 +195,19 @@ public class AnonCredCheckActivity extends Activity {
     	
     }
     
-    public void setupIdemix() {
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.sp));
-		
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.gp));
+    public void setupCredentials() {
 
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.ipk));
-		
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.structure));
+        AndroidWalker aw = new AndroidWalker(getResources().getAssets());
+        CredentialInformation.setTreeWalker(aw);
+        DescriptionStore.setTreeWalker(aw);
 
-        ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
-        		getApplicationContext().getResources().openRawResource(R.raw.specification));
-        
-        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_STUDENT);     
+        VerifyCredentialInformation vci = null;
+		try {
+			vci = new VerifyCredentialInformation("RU", "studentCardAll");
+			idemixVerifySpec = vci.getIdemixVerifySpecification();
+		} catch (InfoException e) {
+			e.printStackTrace();
+		}
     }
     
     @Override
