@@ -31,6 +31,7 @@ import org.irmacard.credentials.idemix.util.CredentialInformation;
 import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
 import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -51,11 +52,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.ibm.zurich.idmx.showproof.ProofSpec;
-import com.ibm.zurich.idmx.utils.StructureStore;
 
 
 /**
@@ -112,7 +109,7 @@ public class AnonCredCheckActivity extends Activity {
 
         setState(STATE_WAITING);
 
-        setupCredentials();
+        setupVerification("Albron", "studentCardAll");
     }
 
     
@@ -195,15 +192,16 @@ public class AnonCredCheckActivity extends Activity {
     	
     }
     
-    public void setupCredentials() {
+    public void setupVerification(String verifier, String verificationID) {
 
         AndroidWalker aw = new AndroidWalker(getResources().getAssets());
         CredentialInformation.setTreeWalker(aw);
         DescriptionStore.setTreeWalker(aw);
-
         VerifyCredentialInformation vci = null;
 		try {
-			vci = new VerifyCredentialInformation("RU", "studentCardAll");
+			vci = new VerifyCredentialInformation(verifier, verificationID);
+			ImageView targetLogo = (ImageView)findViewById(R.id.target);
+			targetLogo.setImageBitmap(aw.getVerificationLogo(DescriptionStore.getInstance().getVerificationDescriptionByName(verifier, verificationID)));
 			idemixVerifySpec = vci.getIdemixVerifySpecification();
 		} catch (InfoException e) {
 			e.printStackTrace();
