@@ -31,6 +31,7 @@ import org.irmacard.credentials.idemix.util.CredentialInformation;
 import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
 import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
+import org.irmacard.credentials.info.VerificationDescription;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -109,7 +110,7 @@ public class AnonCredCheckActivity extends Activity {
 
         setState(STATE_WAITING);
 
-        setupVerification("Albron", "studentCardAll");
+        setupVerification("Albron", "studentCardNone");
     }
 
     
@@ -200,8 +201,11 @@ public class AnonCredCheckActivity extends Activity {
         VerifyCredentialInformation vci = null;
 		try {
 			vci = new VerifyCredentialInformation(verifier, verificationID);
+			VerificationDescription vd = DescriptionStore.getInstance().getVerificationDescriptionByName(verifier, verificationID);
+			TextView credInfo = (TextView)findViewById(R.id.credentialinfo);
+			credInfo.setText(vd.getName());
 			ImageView targetLogo = (ImageView)findViewById(R.id.target);
-			targetLogo.setImageBitmap(aw.getVerificationLogo(DescriptionStore.getInstance().getVerificationDescriptionByName(verifier, verificationID)));
+			targetLogo.setImageBitmap(aw.getVerifierLogo(vd));
 			idemixVerifySpec = vci.getIdemixVerifySpecification();
 		} catch (InfoException e) {
 			e.printStackTrace();
