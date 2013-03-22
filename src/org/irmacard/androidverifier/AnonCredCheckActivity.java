@@ -20,38 +20,43 @@
 
 package org.irmacard.androidverifier;
 
+import java.util.Locale;
+
 import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
 
+import org.irmacard.android.util.credentials.AndroidWalker;
 import org.irmacard.credentials.Attributes;
-import org.irmacard.credentials.CredentialsException;
 import org.irmacard.credentials.idemix.IdemixCredentials;
 import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
+import org.irmacard.credentials.idemix.util.CredentialInformation;
+import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
+import org.irmacard.credentials.info.DescriptionStore;
+import org.irmacard.credentials.info.InfoException;
+import org.irmacard.credentials.info.VerificationDescription;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-
-import com.ibm.zurich.idmx.showproof.ProofSpec;
-import com.ibm.zurich.idmx.utils.StructureStore;
+import android.widget.TextView;
 
 
 /**
@@ -61,9 +66,6 @@ import com.ibm.zurich.idmx.utils.StructureStore;
  *
  */
 public class AnonCredCheckActivity extends Activity {
-
-    // 0x0064 is the id of the student credential
-	private static final short CREDID_STUDENT = (short)0x0064;
 	
 	private NfcAdapter nfcA;
 	private PendingIntent mPendingIntent;
@@ -72,16 +74,37 @@ public class AnonCredCheckActivity extends Activity {
 	private final String TAG = "AnonCredCheck";
 	private IdemixVerifySpecification idemixVerifySpec;
 	private byte[] lastTagUID;
+	private boolean useFullScreen = true;
+	private CountDownTimer cdt = null;
+	private static final int STATE_WAITING = 0;
+	private static final int STATE_CHECKING = 1;
+	private static final int STATE_RESULT_OK = 2;
+	private static final int STATE_RESULT_MISSING = 3;
+	private static final int STATE_RESULT_WARNING = 4;
+		
+	private int activityState = STATE_WAITING;
+	
+	private static final int WAITTIME = 6000; // Time until the status jumps back to STATE_WAITING
+	private static final String language = "en";
+	
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        Configuration config = new Configuration(getResources().getConfiguration());
+        config.locale = new Locale(language);
+        getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+        
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.main);
+        getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.transparentshape));
+        
+        findViewById(R.id.mainshape).setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         
         // Prevent the screen from turning off
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        
         // NFC stuff
         nfcA = NfcAdapter.getDefaultAdapter(getApplicationContext());
         mPendingIntent = PendingIntent.getActivity(this, 0,
@@ -93,38 +116,129 @@ public class AnonCredCheckActivity extends Activity {
 
         // Setup a tech list for all IsoDep cards
         mTechLists = new String[][] { new String[] { IsoDep.class.getName() } };
-        
-        setupIdemix();
+
+        setState(STATE_WAITING);
+
+        setupVerification("Albron", "studentCardNone");
+    }
+
+    
+    void setupScreen() {
+    	if (useFullScreen) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            getActionBar().hide();
+    	} else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getActionBar().show();
+    	}
     }
     
-    public void setupIdemix() {
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/sp.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.sp));
-		
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/gp.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.gp));
+    public void toggleFullscreen(View v) {
+    	useFullScreen = !useFullScreen;
+    	if (useFullScreen) {
+    		v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    	}
+    	setupScreen();
+    }
+    
+    private void setState(int state) {
+    	Log.i(TAG,"Set state: " + state);
+    	activityState = state;
+    	int imageResource = 0;
+    	int statusTextResource = 0;
+    	((AnimatedArrow)findViewById(R.id.animatedArrow)).stopAnimation();
+    	switch (activityState) {
+    	case STATE_WAITING:
+    		imageResource = R.drawable.irma_icon_place_card_520px;
+    		statusTextResource = R.string.status_waiting;
+    		break;
+		case STATE_CHECKING:
+			((AnimatedArrow)findViewById(R.id.animatedArrow)).startAnimation();
+			imageResource = R.drawable.irma_icon_card_found_520px;
+			statusTextResource = R.string.status_checking;
+			break;
+		case STATE_RESULT_OK:
+			imageResource = R.drawable.irma_icon_ok_520px;
+			statusTextResource = R.string.status_ok;
+			break;
+		case STATE_RESULT_MISSING:
+			imageResource = R.drawable.irma_icon_missing_520px;
+			statusTextResource = R.string.status_missing;
+			break;
+		case STATE_RESULT_WARNING:
+			imageResource = R.drawable.irma_icon_warning_520px;
+			statusTextResource = R.string.status_warning;
+			break;
+		default:
+			break;
+		}
+    	
 
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/ipk.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.ipk));
-		
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/RU/studentCard/structure.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.structure));
-
-        ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
-        		getApplicationContext().getResources().openRawResource(R.raw.specification));
         
-        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_STUDENT);     
+    	if (activityState == STATE_RESULT_OK ||
+    			activityState == STATE_RESULT_MISSING || 
+    			activityState == STATE_RESULT_WARNING) {
+        	if (cdt != null) {
+        		cdt.cancel();
+        	}
+        	cdt = new CountDownTimer(WAITTIME, 100) {
+
+        	     public void onTick(long millisUntilFinished) {
+
+        	     }
+
+        	     public void onFinish() {
+        	    	 if (activityState != STATE_CHECKING) {
+        	    		 setState(STATE_WAITING);
+        	    	 }
+        	     }
+        	  }.start();
+    	}
+    	
+		((TextView)findViewById(R.id.statustext)).setText(statusTextResource);
+		((ImageView)findViewById(R.id.statusimage)).setImageResource(imageResource);
+    	
+    }
+    
+    public void setupVerification(String verifier, String verificationID) {
+
+        AndroidWalker aw = new AndroidWalker(getResources().getAssets());
+        CredentialInformation.setTreeWalker(aw);
+        DescriptionStore.setTreeWalker(aw);
+        VerifyCredentialInformation vci = null;
+		try {
+			vci = new VerifyCredentialInformation(verifier, verificationID);
+			VerificationDescription vd = DescriptionStore.getInstance().getVerificationDescriptionByName(verifier, verificationID);
+			TextView credInfo = (TextView)findViewById(R.id.credentialinfo);
+			credInfo.setText(vd.getName());
+			ImageView targetLogo = (ImageView)findViewById(R.id.target);
+			targetLogo.setImageBitmap(aw.getVerifierLogo(vd));
+			idemixVerifySpec = vci.getIdemixVerifySpecification();
+		} catch (InfoException e) {
+			e.printStackTrace();
+		}
     }
     
     @Override
     public void onResume() {
         super.onResume();
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
+            processIntent(getIntent());
+        }        
         if (nfcA != null) {
         	nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         }
-        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
-            onNewIntent(getIntent());
-        }
+
+        
+        // Set the fonts, we have to do this like this because the font is supplied
+        // with the application.
+        Typeface ubuntuFontR=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-R.ttf");
+        ((TextView)findViewById(R.id.statustext)).setTypeface(ubuntuFontR);
+        Typeface ubuntuFontM=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-B.ttf");
+        ((TextView)findViewById(R.id.credentialinfo)).setTypeface(ubuntuFontM);
+        setupScreen();
     }
     
     @Override
@@ -134,35 +248,42 @@ public class AnonCredCheckActivity extends Activity {
     		nfcA.disableForegroundDispatch(this);
     	}
     }
-    
-    public void onNewIntent(Intent intent) {
-        Log.i(TAG, "Discovered tag with intent: " + intent);
+
+    public void processIntent(Intent intent) {
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
     	IsoDep tag = IsoDep.get(tagFromIntent);
     	if (tag != null) {
     		lastTagUID = tagFromIntent.getId();
     		Log.i(TAG,"Found IsoDep tag!");
-    		showProgressDialog();
-    		new CheckCardCredentialTask().execute(tag);
-    	}
-    }
-    
-    private void showResultDialog(int resultValue) {
-    	DialogFragment df = (DialogFragment)getFragmentManager().findFragmentByTag("checkingdialog");
-    	if (df != null) {
-    		df.dismiss();
-    	}
-    	DialogFragment newFragment = CheckResultDialogFragment.newInstance(resultValue);
-    	newFragment.show(getFragmentManager(), "resultdialog");    	
-    }
-    
-    private void showProgressDialog() {
-    	DialogFragment df = (DialogFragment)getFragmentManager().findFragmentByTag("resultdialog");
-    	if (df != null) {
-    		df.dismiss();
+    		
+    		// Make sure we're not already communicating with a card
+    		if (activityState != STATE_CHECKING) {
+	    		setState(STATE_CHECKING);
+	    		new CheckCardCredentialTask().execute(tag);
+    		}
     	}    	
-    	DialogFragment newFragment = ProgressDialogFragment.newInstance(R.string.checkcredentialstitle);
-    	newFragment.show(getFragmentManager(), "checkingdialog");    	
+    }
+    
+    @Override
+    public void onNewIntent(Intent intent) {
+        Log.i(TAG, "Discovered tag with intent: " + intent);
+        setIntent(intent);
+    }
+    
+    private void showResult(int resultValue) {
+    	switch (resultValue) {
+		case Verification.RESULT_VALID:
+			setState(STATE_RESULT_OK);
+			break;
+		case Verification.RESULT_INVALID:
+			setState(STATE_RESULT_MISSING);
+			break;
+		case Verification.RESULT_FAILED:
+			setState(STATE_RESULT_MISSING);
+			break;
+		default:
+			break;
+		}
     }
     
     @Override
@@ -184,76 +305,6 @@ public class AnonCredCheckActivity extends Activity {
         }
     }
     
-    public static class ProgressDialogFragment extends DialogFragment {
-
-        public static ProgressDialogFragment newInstance(int title) {
-            ProgressDialogFragment frag = new ProgressDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("title", title);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle(getArguments().getInt("title"))
-                    .setView(new ProgressBar(getActivity().getApplicationContext(), null,
-        					android.R.attr.progressBarStyleLarge))
-                    .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                            	dialog.dismiss();
-                            }
-                        }
-                    )
-                    .create();
-        }
-    }
-
-    public static class CheckResultDialogFragment extends DialogFragment {
-
-        public static CheckResultDialogFragment newInstance(int value) {
-            CheckResultDialogFragment frag = new CheckResultDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("value", value);
-            frag.setArguments(args);
-            return frag;
-        }
-
-       
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-        	ImageView iv = new ImageView(getActivity().getApplicationContext());
-        	int value = getArguments().getInt("value");
-        	int image_resource = R.drawable.irma_icon_warning_520px;
-        	int title_resource = R.string.verificationfailed_title;
-
-        	switch (value) {
-			case Verification.RESULT_VALID:
-				image_resource = R.drawable.irma_icon_ok_520px;
-				title_resource = R.string.foundcredential_title;
-				break;
-			case Verification.RESULT_INVALID:
-				image_resource = R.drawable.irma_icon_missing_520px;
-				title_resource = R.string.nocredential_title;
-				break;
-			}
-        	iv.setImageResource(image_resource);
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle(title_resource)
-                    .setView(iv)
-                    .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                            	dialog.dismiss();
-                            }
-                        }
-                    )
-                    .create();
-        }
-    }
-    
     private class CheckCardCredentialTask extends AsyncTask<IsoDep, Void, Verification> {
 
 		@Override
@@ -269,6 +320,9 @@ public class AnonCredCheckActivity extends Activity {
 			Attributes attr = null;
 			try {
 				attr = ic.verify(idemixVerifySpec);
+				cs.close();
+				tag.close();
+				
 				if (attr == null) {
 		            Log.i(TAG,"The proof does not verify");
 		            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Proof did not verify.");
@@ -276,7 +330,7 @@ public class AnonCredCheckActivity extends Activity {
 		        	Log.i(TAG,"The proof verified!");
 		        	return new Verification(Verification.RESULT_VALID, lastTagUID, "");
 		        }				
-			} catch (CredentialsException e) {
+			} catch (Exception e) {
 				Log.e(TAG, "Idemix verification threw an Exception!");
 				e.printStackTrace();
 				return new Verification(Verification.RESULT_FAILED, lastTagUID, "Exception message: " + e.getMessage());
@@ -298,7 +352,7 @@ public class AnonCredCheckActivity extends Activity {
 	        		VerificationData.Verifications.CONTENT_URI,
 	        	    mNewValues
 	        	);
-			AnonCredCheckActivity.this.showResultDialog(verification.getResult());
+			AnonCredCheckActivity.this.showResult(verification.getResult());
 		}
     }
 }
