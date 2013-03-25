@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="credential_info">Woonplaats</string>
+	<string name="status_waiting">Wacht op kaart...</string>
+	<string name="status_checking">Attribuut controleren...</string>
+	<string name="status_ok">Attribuut gevonden.</string>
+	<string name="status_missing">Attribuut niet aanwezig.</string>
+	<string name="status_warning">Probeer opnieuw.</string>
+	
+</resources>
