@@ -19,7 +19,7 @@
         android:theme="@android:style/Theme.Holo.Light" >
         <provider
             android:name="VerificationsProvider"
-            android:authorities="org.irmacard.provider.VerificationData"
+            android:authorities="org.irmacard.stadspas.provider.VerificationData"
             android:exported="false" >
             <grant-uri-permission android:pathPattern=".*" />
         </provider>
