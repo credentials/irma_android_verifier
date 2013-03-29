@@ -1,4 +1,4 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.winery;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
  *
  */
 public final class VerificationData {
-	public static final String AUTHORITY = "org.irmacard.provider.VerificationData";
+	public static final String AUTHORITY = "org.irmacard.winery.provider.VerificationData";
 	
 	// This class cannot be instantiated
 	private VerificationData() {

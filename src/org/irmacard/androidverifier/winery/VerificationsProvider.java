@@ -1,4 +1,4 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.winery;
 
 import java.util.HashMap;
 

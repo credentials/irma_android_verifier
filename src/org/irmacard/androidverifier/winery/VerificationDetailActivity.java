@@ -1,4 +1,6 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.winery;
+
+import org.irmacard.androidverifier.winery.R;
 
 import android.support.v4.app.FragmentActivity;
 import android.content.Intent;

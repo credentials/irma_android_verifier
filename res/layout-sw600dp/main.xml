@@ -62,7 +62,7 @@
         android:textSize="34dp" />
 
 
-    <org.irmacard.androidverifier.AnimatedArrow
+    <org.irmacard.androidverifier.winery.AnimatedArrow
         android:id="@+id/animatedArrow"
         android:layout_width="60dp"
         android:layout_height="60dp"

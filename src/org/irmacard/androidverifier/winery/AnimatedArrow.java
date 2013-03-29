@@ -1,4 +1,6 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.winery;
+
+import org.irmacard.androidverifier.winery.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;
