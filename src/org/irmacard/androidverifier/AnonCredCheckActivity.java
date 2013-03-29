@@ -20,18 +20,27 @@
 
 package org.irmacard.androidverifier;
 
+import java.util.Locale;
+
 import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
 
+import org.irmacard.android.util.credentials.AndroidWalker;
 import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.idemix.IdemixCredentials;
 import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
+import org.irmacard.credentials.idemix.util.CredentialInformation;
+import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
+import org.irmacard.credentials.info.DescriptionStore;
+import org.irmacard.credentials.info.InfoException;
+import org.irmacard.credentials.info.VerificationDescription;
 
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -49,9 +58,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ibm.zurich.idmx.showproof.ProofSpec;
-import com.ibm.zurich.idmx.utils.StructureStore;
-
 
 /**
  * Main Activity for the IRMA android verifier application.
@@ -60,9 +66,6 @@ import com.ibm.zurich.idmx.utils.StructureStore;
  *
  */
 public class AnonCredCheckActivity extends Activity {
-
-    // 0x0064 is the id of the student credential
-	private static final short CREDID_AGE = (short)0x000A;
 	
 	private NfcAdapter nfcA;
 	private PendingIntent mPendingIntent;
@@ -82,11 +85,18 @@ public class AnonCredCheckActivity extends Activity {
 	private int activityState = STATE_WAITING;
 	
 	private static final int WAITTIME = 6000; // Time until the status jumps back to STATE_WAITING
+	private static final String language = "en";
+	
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        Configuration config = new Configuration(getResources().getConfiguration());
+        config.locale = new Locale(language);
+        getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+        
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.main);
         getActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.transparentshape));
@@ -109,7 +119,7 @@ public class AnonCredCheckActivity extends Activity {
 
         setState(STATE_WAITING);
 
-        setupIdemix();
+        setupVerification("Winery", "over18");
     }
 
     
@@ -192,23 +202,23 @@ public class AnonCredCheckActivity extends Activity {
     	
     }
     
-    public void setupIdemix() {
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/sp.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.sp));
-		
-		StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/gp.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.gp));
+    public void setupVerification(String verifier, String verificationID) {
 
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/ipk.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.ipk));
-		
-        StructureStore.getInstance().get("http://www.irmacard.org/credentials/phase1/MijnOverheid/ageLower/structure.xml",
-        		getApplicationContext().getResources().openRawResource(R.raw.structure));
-
-        ProofSpec spec = (ProofSpec) StructureStore.getInstance().get("specification",
-        		getApplicationContext().getResources().openRawResource(R.raw.specification));
-        
-        idemixVerifySpec = new IdemixVerifySpecification(spec, CREDID_AGE);     
+        AndroidWalker aw = new AndroidWalker(getResources().getAssets());
+        CredentialInformation.setTreeWalker(aw);
+        DescriptionStore.setTreeWalker(aw);
+        VerifyCredentialInformation vci = null;
+		try {
+			vci = new VerifyCredentialInformation(verifier, verificationID);
+			VerificationDescription vd = DescriptionStore.getInstance().getVerificationDescriptionByName(verifier, verificationID);
+			TextView credInfo = (TextView)findViewById(R.id.credentialinfo);
+			credInfo.setText(vd.getName());
+			ImageView targetLogo = (ImageView)findViewById(R.id.target);
+			targetLogo.setImageBitmap(aw.getVerifierLogo(vd));
+			idemixVerifySpec = vci.getIdemixVerifySpecification();
+		} catch (InfoException e) {
+			e.printStackTrace();
+		}
     }
     
     @Override
