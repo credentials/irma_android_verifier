@@ -1,4 +1,6 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.stadspas;
+
+import org.irmacard.androidverifier.stadspas.R;
 
 import android.content.Intent;
 import android.os.Bundle;

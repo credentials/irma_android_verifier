@@ -53,7 +53,7 @@
         android:textSize="20dp" />
 
 
-    <org.irmacard.androidverifier.AnimatedArrow
+    <org.irmacard.androidverifier.stadspas.AnimatedArrow
         android:id="@+id/animatedArrow"
         android:layout_width="60dp"
         android:layout_height="60dp"

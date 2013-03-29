@@ -1,4 +1,4 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.stadspas;
 
 import android.net.Uri;
 import android.provider.BaseColumns;

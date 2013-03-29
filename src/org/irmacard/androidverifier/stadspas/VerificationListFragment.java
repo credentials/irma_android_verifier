@@ -1,4 +1,4 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.stadspas;
 
 import android.app.Activity;
 import android.database.Cursor;

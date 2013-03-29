@@ -1,8 +1,10 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.stadspas;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.irmacard.androidverifier.stadspas.R;
 
 import android.support.v4.app.Fragment;
 import android.content.ContentUris;

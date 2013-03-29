@@ -1,4 +1,4 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.stadspas;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

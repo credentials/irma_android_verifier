@@ -9,7 +9,7 @@
     android:showDividers="middle"
     tools:context=".VerificationListActivity">
 
-    <fragment android:name="org.irmacard.androidverifier.VerificationListFragment"
+    <fragment android:name="org.irmacard.androidverifier.stadspas.VerificationListFragment"
         android:id="@+id/verification_list"
         android:layout_width="0dp"
         android:layout_height="match_parent"

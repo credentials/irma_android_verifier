@@ -18,7 +18,7 @@
  * Copyright (C) Wouter Lueks, Radboud University Nijmegen, July 2012.
  */
 
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.stadspas;
 
 import java.util.Locale;
 
@@ -26,6 +26,7 @@ import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
 
 import org.irmacard.android.util.credentials.AndroidWalker;
+import org.irmacard.androidverifier.stadspas.R;
 import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.idemix.IdemixCredentials;
 import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;

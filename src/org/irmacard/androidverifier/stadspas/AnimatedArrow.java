@@ -1,4 +1,6 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.stadspas;
+
+import org.irmacard.androidverifier.stadspas.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,10 +29,10 @@ public class AnimatedArrow extends View {
         
         java.io.InputStream is;
 
-        is = context.getResources().openRawResource(R.drawable.irma_arrow_080px);
+        is = context.getResources().openRawResource(R.drawable.irma_arrow_120px);
         mBitmap = BitmapFactory.decodeStream(is);
         
-        is = context.getResources().openRawResource(R.drawable.arrows_blue_animated_080px);
+        is = context.getResources().openRawResource(R.drawable.arrows_blue_animated_120px);
 
         mMovie = Movie.decodeStream(is);
 	}

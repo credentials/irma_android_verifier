@@ -1,4 +1,6 @@
-package org.irmacard.androidverifier;
+package org.irmacard.androidverifier.stadspas;
+
+import org.irmacard.androidverifier.stadspas.R;
 
 import android.support.v4.app.FragmentActivity;
 import android.content.Intent;
