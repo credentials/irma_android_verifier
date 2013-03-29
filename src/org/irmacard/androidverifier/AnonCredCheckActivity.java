@@ -119,7 +119,7 @@ public class AnonCredCheckActivity extends Activity {
 
         setState(STATE_WAITING);
 
-        setupVerification("Stadspas", "addressAll");
+        setupVerification("Stadspas", "addressWoonplaats");
     }
 
     
