@@ -29,10 +29,10 @@ public class AnimatedArrow extends View {
         
         java.io.InputStream is;
 
-        is = context.getResources().openRawResource(R.drawable.irma_arrow_120px);
+        is = context.getResources().openRawResource(R.drawable.irma_arrow);
         mBitmap = BitmapFactory.decodeStream(is);
         
-        is = context.getResources().openRawResource(R.drawable.arrows_blue_animated_120px);
+        is = context.getResources().openRawResource(R.drawable.arrows_blue_animated);
 
         mMovie = Movie.decodeStream(is);
 	}
