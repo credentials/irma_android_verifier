@@ -16,14 +16,16 @@ public class Verification {
 	private Date timestamp;
 	private byte[] cardUID;
 	private String info;
+	private String feedback;
 	
 	private DateFormat dateFormat = new SimpleDateFormat("MMMMM dd, yyyy 'at' HH:mm:ss");;
 	
-	public Verification(int result, byte[] cardUID, String info) {
+	public Verification(int result, byte[] cardUID, String info, String feedback) {
 		this.result = result;
 		this.cardUID = cardUID;
 		this.info = info;
 		this.timestamp = Calendar.getInstance().getTime();
+		this.feedback = feedback;
 	}
 	
 	public String getFormattedDate() {
@@ -57,6 +59,10 @@ public class Verification {
 	
 	public String getInfo() {
 		return info;
+	}
+	
+	public String getFeedback() {
+		return feedback;
 	}
 		
 	@Override

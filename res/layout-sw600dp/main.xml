@@ -61,7 +61,18 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/irmadarkblue"
         android:textSize="30dp" />
-
+    
+    <TextView
+        android:id="@+id/feedbacktext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/credentialinfo"
+        android:layout_below="@+id/statustext"
+        android:gravity="center"
+        android:text="@string/status_waiting"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/irmadarkblue"
+        android:textSize="30dp" />
 
     <org.irmacard.androidverifier.AnimatedArrow
         android:id="@+id/animatedArrow"
@@ -85,6 +96,16 @@
         android:background="@drawable/targetshape"
         android:src="@drawable/albronlogo_200" />
 
-
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="@string/status_waiting"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/irmadarkblue"
+        android:textSize="30dp" />
 
 </RelativeLayout>

@@ -33,12 +33,12 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/statusimage"
         android:layout_below="@+id/irmaLogo"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
         android:gravity="left"
         android:text="@string/credential_info"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/irmadarkblue"
-        android:textSize="24dp" />
+        android:textSize="20dp" />
 
     <TextView
         android:id="@+id/statustext"
@@ -50,8 +50,19 @@
         android:text="@string/status_waiting"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/irmadarkblue"
-        android:textSize="20dp" />
+        android:textSize="16dp" />
 
+    <TextView
+        android:id="@+id/feedbacktext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/credentialinfo"
+        android:layout_below="@+id/statustext"
+        android:gravity="center"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/irmadarkblue"
+        android:textSize="16dp" />
 
     <org.irmacard.androidverifier.AnimatedArrow
         android:id="@+id/animatedArrow"
