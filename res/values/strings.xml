@@ -13,12 +13,13 @@
     <string name="verification_list_invalid">Invalid</string>
     <string name="verification_list_failed">Failed</string>
 	<string name="menu_history">History</string>
+	<string name="menu_settings">Settings</string>
 	<string name="instruction_text">Please supply your IRMA card.</string>
 	<string name="credential_info">Student credential</string>
 	<string name="status_waiting">Waiting for card</string>
 	<string name="status_checking">Checking credentials</string>
-	<string name="status_ok">Credential found</string>
-	<string name="status_missing">Credential missing</string>
+	<string name="status_ok">Attribute verified.</string>
+	<string name="status_missing">Attribute not present.</string>
 	<string name="status_warning">Try again</string>
 	
 </resources>
