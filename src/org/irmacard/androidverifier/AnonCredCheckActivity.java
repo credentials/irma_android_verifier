@@ -124,7 +124,7 @@ public class AnonCredCheckActivity extends Activity {
         // Setup a tech list for all IsoDep cards
         mTechLists = new String[][] { new String[] { IsoDep.class.getName() } };
 
-        setState(STATE_WAITING);
+        setState(STATE_WAITING, "");
 
         
     }
@@ -150,7 +150,7 @@ public class AnonCredCheckActivity extends Activity {
     	setupScreen();
     }
     
-    private void setState(int state) {
+    private void setState(int state, String feedback) {
     	Log.i(TAG,"Set state: " + state);
     	activityState = state;
     	int imageResource = 0;
@@ -198,12 +198,12 @@ public class AnonCredCheckActivity extends Activity {
 
         	     public void onFinish() {
         	    	 if (activityState != STATE_CHECKING) {
-        	    		 setState(STATE_WAITING);
+        	    		 setState(STATE_WAITING, "");
         	    	 }
         	     }
         	  }.start();
     	}
-    	
+    	((TextView)findViewById(R.id.feedbacktext)).setText(feedback);
 		((TextView)findViewById(R.id.statustext)).setText(statusTextResource);
 		((ImageView)findViewById(R.id.statusimage)).setImageResource(imageResource);
     	
@@ -267,8 +267,10 @@ public class AnonCredCheckActivity extends Activity {
         // with the application.
         Typeface ubuntuFontR=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-R.ttf");
         ((TextView)findViewById(R.id.statustext)).setTypeface(ubuntuFontR);
+        ((TextView)findViewById(R.id.feedbacktext)).setTypeface(ubuntuFontR);
         Typeface ubuntuFontM=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-B.ttf");
         ((TextView)findViewById(R.id.credentialinfo)).setTypeface(ubuntuFontM);
+        
         setupScreen();
     }
     
@@ -289,7 +291,7 @@ public class AnonCredCheckActivity extends Activity {
     		
     		// Make sure we're not already communicating with a card
     		if (activityState != STATE_CHECKING) {
-	    		setState(STATE_CHECKING);
+	    		setState(STATE_CHECKING, "");
 	    		new CheckCardCredentialTask().execute(tag);
     		}
     	}    	
@@ -301,16 +303,16 @@ public class AnonCredCheckActivity extends Activity {
         setIntent(intent);
     }
     
-    private void showResult(int resultValue) {
+    private void showResult(int resultValue, String feedback) {
     	switch (resultValue) {
 		case Verification.RESULT_VALID:
-			setState(STATE_RESULT_OK);
+			setState(STATE_RESULT_OK, feedback);
 			break;
 		case Verification.RESULT_INVALID:
-			setState(STATE_RESULT_MISSING);
+			setState(STATE_RESULT_MISSING, feedback);
 			break;
 		case Verification.RESULT_FAILED:
-			setState(STATE_RESULT_MISSING);
+			setState(STATE_RESULT_MISSING, feedback);
 			break;
 		default:
 			break;
@@ -362,7 +364,7 @@ public class AnonCredCheckActivity extends Activity {
 				
 				if (attr == null) {
 		            Log.i(TAG,"The proof does not verify");
-		            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Proof did not verify.");
+		            return new Verification(Verification.RESULT_INVALID, lastTagUID, "Proof did not verify.", "");
 		        } else {
 		        	Log.i(TAG,"The proof verified!");
 		        	return checkAttributes(attr);
@@ -370,7 +372,7 @@ public class AnonCredCheckActivity extends Activity {
 			} catch (Exception e) {
 				Log.e(TAG, "Idemix verification threw an Exception!");
 				e.printStackTrace();
-				return new Verification(Verification.RESULT_FAILED, lastTagUID, "Exception message: " + e.getMessage());
+				return new Verification(Verification.RESULT_FAILED, lastTagUID, "Exception message: " + e.getMessage(), "");
 			}
 		}
 		
@@ -379,15 +381,15 @@ public class AnonCredCheckActivity extends Activity {
 			if (currentVerifier.equals("Winery") && currentVerificationID.equals("over18")) {
 				String age = new String(attr.get("over18"));
 				if (age.equalsIgnoreCase("yes")) {
-	        		return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+	        		return new Verification(Verification.RESULT_VALID, lastTagUID, "", "");
 	        	} else {
-	        		return new Verification(Verification.RESULT_INVALID, lastTagUID, "Not over 18");		        		
+	        		return new Verification(Verification.RESULT_INVALID, lastTagUID, "Not over 18", "");		        		
 	        	}
 			} else if (currentVerifier.equals("Stadspas") && currentVerificationID.equals("addressWoonplaats")) {
 				String city = new String(attr.get("city"));
-				return new Verification(Verification.RESULT_VALID, lastTagUID, city);
+				return new Verification(Verification.RESULT_VALID, lastTagUID, city, city);
 			} else {
-				return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+				return new Verification(Verification.RESULT_VALID, lastTagUID, "", "");
 			}
 		}
 		
@@ -406,7 +408,7 @@ public class AnonCredCheckActivity extends Activity {
 	        		VerificationData.Verifications.CONTENT_URI,
 	        	    mNewValues
 	        	);
-			AnonCredCheckActivity.this.showResult(verification.getResult());
+			AnonCredCheckActivity.this.showResult(verification.getResult(), verification.getFeedback());
 		}
     }
 }
