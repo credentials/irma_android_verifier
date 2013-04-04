@@ -4,7 +4,7 @@
 	<string name="credential_info">Leeftijd: 18+</string>
 	<string name="status_waiting">Wacht op kaart...</string>
 	<string name="status_checking">Attribuut controleren...</string>
-	<string name="status_ok">Attribuut gevonden.</string>
+	<string name="status_ok">Attribuut geverifieerd.</string>
 	<string name="status_missing">Attribuut niet aanwezig.</string>
 	<string name="status_warning">Probeer opnieuw.</string>
 	
