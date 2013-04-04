@@ -81,7 +81,7 @@
         android:layout_height="200dp"
         android:layout_alignBottom="@+id/mainshape"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="85dp"
+        android:layout_marginBottom="70dp"
         android:src="@drawable/irma_icon_place_card_520px" />
 
 </RelativeLayout>

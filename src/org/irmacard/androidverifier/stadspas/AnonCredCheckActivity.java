@@ -20,6 +20,7 @@
 
 package org.irmacard.androidverifier.stadspas;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import net.sourceforge.scuba.smartcards.CardService;
@@ -34,6 +35,7 @@ import org.irmacard.credentials.idemix.util.CredentialInformation;
 import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
 import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
+import org.irmacard.credentials.info.IssuerDescription;
 import org.irmacard.credentials.info.VerificationDescription;
 
 import android.app.Activity;
@@ -41,6 +43,7 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.nfc.NfcAdapter;
@@ -49,6 +52,7 @@ import android.nfc.tech.IsoDep;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -84,18 +88,21 @@ public class AnonCredCheckActivity extends Activity {
 	private static final int STATE_RESULT_WARNING = 4;
 		
 	private int activityState = STATE_WAITING;
+	private String currentVerifier;
+	private String currentVerificationID;
 	
 	private static final int WAITTIME = 6000; // Time until the status jumps back to STATE_WAITING
-	private static final String language = "en";
 	
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String prefLang = sharedPref.getString(SettingsActivity.KEY_PREF_LANGUAGE, "en");
         
         Configuration config = new Configuration(getResources().getConfiguration());
-        config.locale = new Locale(language);
+        config.locale = new Locale(prefLang);
         getResources().updateConfiguration(config,getResources().getDisplayMetrics());
         
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
@@ -120,7 +127,7 @@ public class AnonCredCheckActivity extends Activity {
 
         setState(STATE_WAITING);
 
-        setupVerification("Stadspas", "addressWoonplaats");
+    //    setupVerification("Stadspas", "addressWoonplaats");
     }
 
     
@@ -204,7 +211,8 @@ public class AnonCredCheckActivity extends Activity {
     }
     
     public void setupVerification(String verifier, String verificationID) {
-
+    	currentVerifier = verifier;
+    	currentVerificationID = verificationID;
         AndroidWalker aw = new AndroidWalker(getResources().getAssets());
         CredentialInformation.setTreeWalker(aw);
         DescriptionStore.setTreeWalker(aw);
@@ -220,6 +228,24 @@ public class AnonCredCheckActivity extends Activity {
 		} catch (InfoException e) {
 			e.printStackTrace();
 		}
+		printInfo();
+    }
+    
+    public void printInfo() {
+    	try {
+			Collection<IssuerDescription> issuers = DescriptionStore.getInstance().getIssuerDescriptions();
+			for (IssuerDescription issuerDescription : issuers) {
+				System.out.println(" * Issuer: " + issuerDescription.getID() + " (" + issuerDescription.getID() + ")");
+				Collection<VerificationDescription> verificationDescriptions = DescriptionStore.getInstance().getVerificationDescriptionsForVerifier(issuerDescription);
+				for (VerificationDescription verificationDescription : verificationDescriptions) {
+					System.out.println("      -> " + verificationDescription.getVerificationID() + " (" + verificationDescription.getName() + ")");
+				}
+			}
+		} catch (InfoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     }
     
     @Override
@@ -232,6 +258,11 @@ public class AnonCredCheckActivity extends Activity {
         	nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         }
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String prefVerifier = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFIER, "Albron");
+        String prefVerificationDescription = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFICATIONDESCRIPTION, "studentCardNone");
+        
+        setupVerification(prefVerifier, prefVerificationDescription);
         
         // Set the fonts, we have to do this like this because the font is supplied
         // with the application.
@@ -303,13 +334,18 @@ public class AnonCredCheckActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_history:
-        	Intent intent = new Intent(this, VerificationListActivity.class);
-        	startActivity(intent);
+        	Intent historyIntent = new Intent(this, VerificationListActivity.class);
+        	startActivity(historyIntent);
+        	return true;
+        case R.id.menu_settings:
+        	Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        	startActivity(settingsIntent);
         	return true;
         default:
         	return super.onOptionsItemSelected(item);
         }
     }
+    
     
     private class CheckCardCredentialTask extends AsyncTask<IsoDep, Void, Verification> {
 
@@ -326,6 +362,7 @@ public class AnonCredCheckActivity extends Activity {
 			Attributes attr = null;
 			try {
 				attr = ic.verify(idemixVerifySpec);
+				
 				cs.close();
 				tag.close();
 
@@ -343,6 +380,23 @@ public class AnonCredCheckActivity extends Activity {
 				Log.e(TAG, "Idemix verification threw an Exception!");
 				e.printStackTrace();
 				return new Verification(Verification.RESULT_FAILED, lastTagUID, "Exception message: " + e.getMessage());
+			}
+		}
+		
+		private Verification checkAttributes(Attributes attr) {
+			// Use-case specific code for handling the attributes
+			if (currentVerifier.equals("Winery") && currentVerificationID.equals("over18")) {
+				String age = new String(attr.get("over18"));
+				if (age.equalsIgnoreCase("yes")) {
+	        		return new Verification(Verification.RESULT_VALID, lastTagUID, "");
+	        	} else {
+	        		return new Verification(Verification.RESULT_INVALID, lastTagUID, "Not over 18");		        		
+	        	}
+			} else if (currentVerifier.equals("Stadspas") && currentVerificationID.equals("addressWoonplaats")) {
+				String city = new String(attr.get("city"));
+				return new Verification(Verification.RESULT_VALID, lastTagUID, city);
+			} else {
+				return new Verification(Verification.RESULT_VALID, lastTagUID, "");
 			}
 		}
 		

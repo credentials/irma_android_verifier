@@ -33,7 +33,6 @@ public class AnimatedArrow extends View {
         mBitmap = BitmapFactory.decodeStream(is);
         
         is = context.getResources().openRawResource(R.drawable.arrows_blue_animated);
-
         mMovie = Movie.decodeStream(is);
 	}
 

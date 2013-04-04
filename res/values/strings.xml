@@ -13,6 +13,7 @@
     <string name="verification_list_invalid">Invalid</string>
     <string name="verification_list_failed">Failed</string>
 	<string name="menu_history">History</string>
+	<string name="menu_settings">Settings</string>
 	<string name="instruction_text">Please supply your IRMA card.</string>
 	<string name="credential_info">Woonplaats</string>
 	<string name="status_waiting">Wacht op kaart...</string>
@@ -20,5 +21,4 @@
 	<string name="status_ok">Attribuut gevonden.</string>
 	<string name="status_missing">Attribuut niet aanwezig.</string>
 	<string name="status_warning">Fout, probeer opnieuw.</string>
-	
 </resources>
