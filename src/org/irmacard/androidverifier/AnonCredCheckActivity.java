@@ -89,6 +89,7 @@ public class AnonCredCheckActivity extends Activity {
 	private int activityState = STATE_WAITING;
 	private String currentVerifier;
 	private String currentVerificationID;
+	private boolean verificationSetup = false;
 	
 	private static final int WAITTIME = 6000; // Time until the status jumps back to STATE_WAITING
 	
@@ -183,7 +184,6 @@ public class AnonCredCheckActivity extends Activity {
 		}
     	
 
-        
     	if (activityState == STATE_RESULT_OK ||
     			activityState == STATE_RESULT_MISSING || 
     			activityState == STATE_RESULT_WARNING) {
@@ -209,7 +209,13 @@ public class AnonCredCheckActivity extends Activity {
     	
     }
     
-    public void setupVerification(String verifier, String verificationID) {
+    public void setupVerification() {
+    	// TODO: make these preferences more robust as previously selected verifiers/specs
+    	// might have been removed from irma_configuration
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String verifier = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFIER, "Albron");
+        String verificationID = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFICATIONDESCRIPTION, "studentCardNone");
+
     	currentVerifier = verifier;
     	currentVerificationID = verificationID;
         AndroidWalker aw = new AndroidWalker(getResources().getAssets());
@@ -227,7 +233,7 @@ public class AnonCredCheckActivity extends Activity {
 		} catch (InfoException e) {
 			e.printStackTrace();
 		}
-		printInfo();
+    	verificationSetup  = true;
     }
     
     public void printInfo() {
@@ -241,7 +247,6 @@ public class AnonCredCheckActivity extends Activity {
 				}
 			}
 		} catch (InfoException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
@@ -251,17 +256,13 @@ public class AnonCredCheckActivity extends Activity {
     public void onResume() {
         super.onResume();
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
-            processIntent(getIntent());
+        	processIntent(getIntent());
         }        
         if (nfcA != null) {
         	nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         }
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String prefVerifier = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFIER, "Albron");
-        String prefVerificationDescription = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFICATIONDESCRIPTION, "studentCardNone");
         
-        setupVerification(prefVerifier, prefVerificationDescription);
+        setupVerification();
         
         // Set the fonts, we have to do this like this because the font is supplied
         // with the application.
@@ -285,21 +286,24 @@ public class AnonCredCheckActivity extends Activity {
     public void processIntent(Intent intent) {
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
     	IsoDep tag = IsoDep.get(tagFromIntent);
-    	if (tag != null) {
+    	
+    	if (tag != null && !intent.getBooleanExtra("handled", false)) {
     		lastTagUID = tagFromIntent.getId();
-    		Log.i(TAG,"Found IsoDep tag!");
-    		
+    		// Make sure verification stuff is setup
+    		if (!verificationSetup) {
+    			setupVerification();
+    		}
     		// Make sure we're not already communicating with a card
     		if (activityState != STATE_CHECKING) {
 	    		setState(STATE_CHECKING, "");
 	    		new CheckCardCredentialTask().execute(tag);
     		}
-    	}    	
+    	}
+    	intent.putExtra("handled", true);
     }
     
     @Override
     public void onNewIntent(Intent intent) {
-        Log.i(TAG, "Discovered tag with intent: " + intent);
         setIntent(intent);
     }
     
