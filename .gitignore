@@ -1,4 +1,4 @@
 bin/
 gen/
 irma_configuration
-
+*.apk
