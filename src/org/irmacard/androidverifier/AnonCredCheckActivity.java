@@ -43,6 +43,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.nfc.NfcAdapter;
@@ -100,7 +101,7 @@ public class AnonCredCheckActivity extends Activity {
         super.onCreate(savedInstanceState);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String prefLang = sharedPref.getString(SettingsActivity.KEY_PREF_LANGUAGE, "en");
-        
+
         Configuration config = new Configuration(getResources().getConfiguration());
         config.locale = new Locale(prefLang);
         getResources().updateConfiguration(config,getResources().getDisplayMetrics());
@@ -209,18 +210,79 @@ public class AnonCredCheckActivity extends Activity {
     	
     }
     
+    /**
+     * Checks whether verifier/issuer and verification description are already properly
+     * set in the preferences.
+     */
+    private void checkPreferences() {
+    	SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+    	String verifier = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFIER, "");
+    	String verificationID = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFICATIONDESCRIPTION, "");
+
+    	if (verifier.equals("") || verificationID.equals("")) {
+    		DescriptionStore ds = null;
+    		try {
+    			 ds = DescriptionStore.getInstance();
+    		} catch (InfoException e) {
+    			e.printStackTrace();
+    		}
+    		
+    		// Check whether the selected verifier is still available, if not, select the first one
+    		Collection<IssuerDescription> verifiers = ds.getIssuerDescriptions();
+    		String selectedVerifier = null;
+    		for (IssuerDescription issuerDescription : verifiers) {
+				if (selectedVerifier == null || verifier.equals(issuerDescription.getID())) {
+					selectedVerifier = issuerDescription.getID();
+				}
+			}
+    		if (!verifier.equals(selectedVerifier)) {
+    			// If not properly set, change/set the preference
+    			Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+    			prefEditor.putString(SettingsActivity.KEY_PREF_VERIFIER, selectedVerifier);
+    			prefEditor.commit();
+    		}
+    		
+    		// Check whether the selected verificationdescription is still available, if not, select the first one
+    		Collection<VerificationDescription> verificationDescriptions = ds.getVerificationDescriptionsForVerifier(selectedVerifier);
+    		String selectedVerificationID = null;
+    		for (VerificationDescription verificationDescription : verificationDescriptions) {
+				if (selectedVerificationID == null || verificationID.equals(verificationDescription.getVerificationID())) {
+					selectedVerificationID = verificationDescription.getVerificationID();
+				}
+			}
+    		if (!verificationID.equals(selectedVerificationID)) {
+    			// If not properly set, change/set the preference
+    			Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+    			prefEditor.putString(SettingsActivity.KEY_PREF_VERIFICATIONDESCRIPTION, selectedVerificationID);
+    			prefEditor.commit();
+    		}
+    	}
+    }
+    
     public void setupVerification() {
-    	// TODO: make these preferences more robust as previously selected verifiers/specs
-    	// might have been removed from irma_configuration
+
+
+        AndroidWalker aw = new AndroidWalker(getResources().getAssets());
+        CredentialInformation.setTreeWalker(aw);
+        DescriptionStore.setTreeWalker(aw);
+        try {
+			DescriptionStore.getInstance();
+		} catch (InfoException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
+    	checkPreferences();
+    	
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String verifier = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFIER, "Albron");
         String verificationID = sharedPref.getString(SettingsActivity.KEY_PREF_VERIFICATIONDESCRIPTION, "studentCardNone");
 
     	currentVerifier = verifier;
     	currentVerificationID = verificationID;
-        AndroidWalker aw = new AndroidWalker(getResources().getAssets());
-        CredentialInformation.setTreeWalker(aw);
-        DescriptionStore.setTreeWalker(aw);
+    	Log.i(TAG,"use CurrentVerifier: " + currentVerifier);
+    	Log.i(TAG,"use VerificationID: " + currentVerificationID);
+    	
         VerifyCredentialInformation vci = null;
 		try {
 			vci = new VerifyCredentialInformation(verifier, verificationID);
@@ -261,7 +323,7 @@ public class AnonCredCheckActivity extends Activity {
         if (nfcA != null) {
         	nfcA.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         }
-        
+
         setupVerification();
         
         // Set the fonts, we have to do this like this because the font is supplied
