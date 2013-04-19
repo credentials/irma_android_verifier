@@ -69,9 +69,11 @@
         android:layout_alignLeft="@+id/credentialinfo"
         android:layout_below="@+id/statustext"
         android:gravity="center"
-        android:text="@string/status_waiting"
+        android:layout_marginTop="15dp"
+        android:text="@string/feedback_text"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/irmadarkblue"
+        android:textStyle="italic"
         android:textSize="30dp" />
 
     <org.irmacard.androidverifier.AnimatedArrow

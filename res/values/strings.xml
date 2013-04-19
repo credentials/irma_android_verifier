@@ -21,5 +21,6 @@
 	<string name="status_ok">Attribute verified.</string>
 	<string name="status_missing">Attribute not present.</string>
 	<string name="status_warning">Try again</string>
+	<string name="feedback_text">Attribute value</string>
 	
 </resources>

@@ -331,8 +331,12 @@ public class AnonCredCheckActivity extends Activity {
         Typeface ubuntuFontR=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-R.ttf");
         ((TextView)findViewById(R.id.statustext)).setTypeface(ubuntuFontR);
         ((TextView)findViewById(R.id.feedbacktext)).setTypeface(ubuntuFontR);
+        
         Typeface ubuntuFontM=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-B.ttf");
         ((TextView)findViewById(R.id.credentialinfo)).setTypeface(ubuntuFontM);
+        
+        Typeface ubuntuFontRI=Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-RI.ttf");
+        ((TextView)findViewById(R.id.feedbacktext)).setTypeface(ubuntuFontRI);
         
         setupScreen();
     }
