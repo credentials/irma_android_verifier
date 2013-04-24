@@ -448,7 +448,7 @@ public class AnonCredCheckActivity extends Activity {
 		
 		private Verification checkAttributes(Attributes attr) {
 			// Use-case specific code for handling the attributes
-			if (currentVerifier.equals("Winery") && currentVerificationID.equals("over18")) {
+			if (currentVerifier.equals("Bar") && currentVerificationID.equals("over18")) {
 				String age = new String(attr.get("over18"));
 				if (age.equalsIgnoreCase("yes")) {
 	        		return new Verification(Verification.RESULT_VALID, lastTagUID, "", "");
