@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
+import org.irmacard.demo.androidverifier.R;
+
 import android.app.Activity;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
