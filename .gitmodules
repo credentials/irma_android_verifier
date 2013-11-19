@@ -1,0 +1,3 @@
+[submodule "assets/irma_configuration"]
+	path = assets/irma_configuration
+	url = git://github.com/credentials/irma_configuration.git
