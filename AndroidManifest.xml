@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.irmacard.androidverifier"
+    package="org.irmacard.demo.androidverifier"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -19,7 +19,7 @@
         android:theme="@android:style/Theme.Holo.Light" >
         <provider
             android:name="org.irmacard.androidverifier.VerificationsProvider"
-            android:authorities="org.irmacard.provider.VerificationData"
+            android:authorities="org.irmacard.demo.provider.VerificationData"
             android:exported="false" >
             <grant-uri-permission android:pathPattern=".*" />
         </provider>

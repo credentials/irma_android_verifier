@@ -36,6 +36,7 @@ import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
 import org.irmacard.credentials.info.IssuerDescription;
 import org.irmacard.credentials.info.VerificationDescription;
+import org.irmacard.demo.androidverifier.R;
 
 import android.app.Activity;
 import android.app.PendingIntent;

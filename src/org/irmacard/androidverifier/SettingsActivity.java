@@ -2,12 +2,11 @@ package org.irmacard.androidverifier;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
 import org.irmacard.credentials.info.IssuerDescription;
 import org.irmacard.credentials.info.VerificationDescription;
-
+import org.irmacard.demo.androidverifier.R;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;

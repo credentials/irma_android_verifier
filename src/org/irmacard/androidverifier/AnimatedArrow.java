@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Movie;
 import android.util.AttributeSet;
 import android.view.View;
+import org.irmacard.demo.androidverifier.R;
 
 /**
  * A view that shows our animated arrow. Please note that this needs android:hardwareAccelerated="false"

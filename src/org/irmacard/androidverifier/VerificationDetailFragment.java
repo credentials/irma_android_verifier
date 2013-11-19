@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.irmacard.demo.androidverifier.R;
+
 import android.support.v4.app.Fragment;
 import android.content.ContentUris;
 import android.database.Cursor;

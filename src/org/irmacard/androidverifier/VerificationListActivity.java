@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import org.irmacard.demo.androidverifier.R;
 
 public class VerificationListActivity extends FragmentActivity
         implements VerificationListFragment.Callbacks {
