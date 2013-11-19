@@ -3,7 +3,7 @@ package org.irmacard.androidverifier;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import org.irmacard.pilot.androidverifier.R;
 import android.content.Context;
 import android.database.Cursor;
 import android.widget.ImageView;

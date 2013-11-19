@@ -22,10 +22,8 @@ package org.irmacard.androidverifier;
 
 import java.util.Collection;
 import java.util.Locale;
-
 import net.sourceforge.scuba.smartcards.CardService;
 import net.sourceforge.scuba.smartcards.IsoDepCardService;
-
 import org.irmacard.android.util.credentials.AndroidWalker;
 import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.idemix.IdemixCredentials;
@@ -36,7 +34,7 @@ import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
 import org.irmacard.credentials.info.IssuerDescription;
 import org.irmacard.credentials.info.VerificationDescription;
-
+import org.irmacard.pilot.androidverifier.R;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentValues;
