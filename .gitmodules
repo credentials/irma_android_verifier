@@ -3,6 +3,6 @@
 	url = https://github.com/credentials/irma_configuration.git
 	branch = demo
 [submodule "src/pilot/irma_configuration"]
-	path = src/pilot/irma_configuration
+	path = src/pilot/assets/irma_configuration
 	url = https://github.com/credentials/irma_configuration.git
 	branch = pilot
