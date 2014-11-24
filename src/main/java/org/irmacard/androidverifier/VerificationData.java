@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
  *
  */
 public final class VerificationData {
-	public static final String AUTHORITY = "org.irmacard.provider.VerificationData";
+	public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".VerificationData";
 	
 	// This class cannot be instantiated
 	private VerificationData() {

@@ -33,6 +33,15 @@ android {
         // Some translations are missing in Dutch
         disable 'MissingTranslation'
     }
+
+    productFlavors {
+        demo {
+            applicationId = "org.irmacard.androidverifier.demo"
+        }
+        pilot {
+            applicationId = "org.irmacard.androidverifier.pilot"
+        }
+    }
 }
 
 dependencies {

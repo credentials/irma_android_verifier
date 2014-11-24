@@ -21,7 +21,7 @@
         android:theme="@android:style/Theme.Holo.Light" >
         <provider
             android:name="org.irmacard.androidverifier.VerificationsProvider"
-            android:authorities="org.irmacard.provider.VerificationData"
+            android:authorities="${applicationId}.VerificationData"
             android:exported="false" >
             <grant-uri-permission android:pathPattern=".*" />
         </provider>
