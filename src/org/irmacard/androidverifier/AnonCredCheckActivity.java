@@ -23,15 +23,14 @@ package org.irmacard.androidverifier;
 import java.util.Collection;
 import java.util.Locale;
 
-import net.sourceforge.scuba.smartcards.CardService;
-import net.sourceforge.scuba.smartcards.IsoDepCardService;
+import net.sf.scuba.smartcards.CardService;
+import net.sf.scuba.smartcards.IsoDepCardService;
 
 import org.irmacard.android.util.credentials.AndroidWalker;
 import org.irmacard.credentials.Attributes;
 import org.irmacard.credentials.idemix.IdemixCredentials;
-import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
-import org.irmacard.credentials.idemix.util.CredentialInformation;
-import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
+import org.irmacard.credentials.idemix.descriptions.IdemixVerificationDescription;
+import org.irmacard.credentials.idemix.info.IdemixKeyStore;
 import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
 import org.irmacard.credentials.info.IssuerDescription;
@@ -77,7 +76,7 @@ public class AnonCredCheckActivity extends Activity {
 	private IntentFilter[] mFilters;
 	private String[][] mTechLists;
 	private final String TAG = "AnonCredCheck";
-	private IdemixVerifySpecification idemixVerifySpec;
+	private IdemixVerificationDescription idemixVerifySpec;
 	private byte[] lastTagUID;
 	private boolean useFullScreen = true;
 	private CountDownTimer cdt = null;
@@ -260,10 +259,8 @@ public class AnonCredCheckActivity extends Activity {
     }
     
     public void setupVerification() {
-
-
         AndroidWalker aw = new AndroidWalker(getResources().getAssets());
-        CredentialInformation.setTreeWalker(aw);
+        IdemixKeyStore.setTreeWalker(aw);
         DescriptionStore.setTreeWalker(aw);
         try {
 			DescriptionStore.getInstance();
@@ -282,16 +279,16 @@ public class AnonCredCheckActivity extends Activity {
     	currentVerificationID = verificationID;
     	Log.i(TAG,"use CurrentVerifier: " + currentVerifier);
     	Log.i(TAG,"use VerificationID: " + currentVerificationID);
-    	
-        VerifyCredentialInformation vci = null;
+
+		IdemixVerificationDescription vci = null;
 		try {
-			vci = new VerifyCredentialInformation(verifier, verificationID);
 			VerificationDescription vd = DescriptionStore.getInstance().getVerificationDescriptionByName(verifier, verificationID);
+			idemixVerifySpec = new IdemixVerificationDescription(vd);
+
 			TextView credInfo = (TextView)findViewById(R.id.credentialinfo);
 			credInfo.setText(vd.getName());
 			ImageView targetLogo = (ImageView)findViewById(R.id.target);
 			targetLogo.setImageBitmap(aw.getVerifierLogo(vd));
-			idemixVerifySpec = vci.getIdemixVerifySpecification();
 		} catch (InfoException e) {
 			e.printStackTrace();
 		}

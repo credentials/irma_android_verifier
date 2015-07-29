@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import net.sourceforge.scuba.util.Hex;
+import net.sf.scuba.util.Hex;
 
 public class Verification {
 	public final static int RESULT_VALID   = 0;
