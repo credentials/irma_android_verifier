@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+apply plugin: 'maven'
+
+version="0.8"
+group="org.irmacard"
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.1.1'
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url "https://credentials.github.io/repos/maven2/"
+    }
+    mavenCentral()
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.1"
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+
+    lintOptions {
+        // BCProv references javax.naming
+        // CredentialsAPI references java.awt and java.swing
+        disable 'InvalidPackage'
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:19.1.0'
+    
+    compile 'org.irmacard.android:irma_android_library:0.8'
+    compile 'net.sourceforge.scuba:scuba_sc_android:0.0.3'
+    compile 'net.sourceforge.scuba:scuba_smartcards:0.0.3'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2'
+}
+

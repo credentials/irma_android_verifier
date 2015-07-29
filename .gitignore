@@ -2,3 +2,7 @@ bin/
 gen/
 irma_configuration
 *.apk
+*.iml
+*.idea
+build/
+.gradle/
